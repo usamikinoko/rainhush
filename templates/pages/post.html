@@ -1,0 +1,23 @@
+{{define "content"}}
+<div class="container post-container">
+<div class="post-main">
+<article class="post">
+    <h2>{{.Title}}</h2>
+    <div class="post-meta-top">
+        {{if .Avatar}}<img class="post-author-avatar" src="{{.Avatar}}" alt="{{.Author}}" loading="lazy">{{end}}
+        <div class="post-meta-row">
+            {{if .Author}}<span class="post-author">{{.Author}}</span>{{end}}
+            {{if .Date}}{{if .Author}}<span class="post-meta-sep">·</span>{{end}}<span class="post-date">Published on {{.Date}}</span>{{end}}
+            {{if .UpdatedAt}}{{if or .Author .Date}}<span class="post-meta-sep">·</span>{{end}}<span class="post-updated">Updated at {{.UpdatedAt}}</span>{{end}}
+            {{if .Location}}{{if or .Author .Date .UpdatedAt}}<span class="post-meta-sep">·</span>{{end}}<span class="post-location">{{.Location}}</span>{{end}}
+        </div>
+    </div>
+    {{if .Cover}}<img class="post-cover" src="{{.Cover}}" alt="{{.Title}}" loading="lazy" decoding="async">{{end}}
+    <div class="post-body">
+        {{.Content}}
+    </div>
+</article>
+</div>
+<aside class="post-toc" id="post-toc"></aside>
+</div>
+{{end}}

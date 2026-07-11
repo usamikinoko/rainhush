@@ -1,0 +1,29 @@
+﻿server:
+  port: 8080
+
+site:
+  url: https://kinoko.fun
+  description: Rainhush - Hypokinoko（阿菇）的个人博客，分享技术开发与生活记录
+  favicon: https://img.kinoko.fun/fake-mirror/ruriloongloong.jpg?imageSlim
+
+home:
+  title: Rainhush
+  subtitle: 雨静 · 书写技术与生活
+  avatar: https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim
+  owner: Hypokinoko
+
+deploy:
+  mode: git
+
+  remote: git@github.com:username/repo.git
+  branch: main
+
+  # server:
+  #   host: example.com
+  #   port: 22
+  #   user: deploy
+  #   path: /var/www/fake-mirror
+  #   identity: C:/Users/you/.ssh/id_ed25519
+  #   known_hosts: C:/Users/you/.ssh/known_hosts
+  #   # Optional fallback when key auth is unavailable:
+  #   password: your-password
