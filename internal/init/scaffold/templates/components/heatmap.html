@@ -1,0 +1,31 @@
+{{define "heatmap"}}
+<div class="home-heatmap">
+    <div class="heatmap-header">
+        <span class="heatmap-title">Activity</span>
+        <span class="heatmap-total">{{.HeatmapTotal}} updates in the last year</span>
+    </div>
+    <div class="heatmap-scroll">
+        <div class="heatmap-grid">
+            <div class="heatmap-months">
+                {{range .HeatmapMonths}}<span class="heatmap-month" style="left: calc((100% / 53) * {{.Col}})">{{.Label}}</span>{{end}}
+            </div>
+            <div class="heatmap-labels">
+                {{range .HeatmapDayLabels}}<span class="heatmap-label">{{.}}</span>{{end}}
+            </div>
+            <div class="heatmap-weeks">
+                {{range .HeatmapCells}}<span class="heatmap-cell heatmap-l{{.Level}}" tabindex="0"><span class="heatmap-tooltip">{{if eq .Count 0}}No updates on {{.Date}}{{else}}{{.Count}} update{{if ne .Count 1}}s{{end}} on {{.Date}}{{end}}</span></span>{{end}}
+            </div>
+        </div>
+    </div>
+    <div class="heatmap-legend" aria-hidden="true">
+        <span>Less</span>
+        <span class="heatmap-legend-cell heatmap-l0"></span>
+        <span class="heatmap-legend-cell heatmap-l1"></span>
+        <span class="heatmap-legend-cell heatmap-l2"></span>
+        <span class="heatmap-legend-cell heatmap-l3"></span>
+        <span class="heatmap-legend-cell heatmap-l4"></span>
+        <span>More</span>
+    </div>
+    <div class="heatmap-divider"></div>
+</div>
+{{end}}

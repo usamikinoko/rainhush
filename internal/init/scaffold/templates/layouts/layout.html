@@ -1,0 +1,77 @@
+{{define "layout"}}
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{if and .Title (ne .Title .SiteName)}}{{.Title}} - {{.SiteName}}{{else}}{{.SiteName}} - Hypokinoko（阿菇）的个人博客{{end}}</title>
+        {{if .Site.Description}}<meta name="description" content="{{.Site.Description}}" />{{end}}
+        <meta name="keywords" content="Rainhush,雨静,Hypokinoko,阿菇,超级阿菇,个人博客,技术博客,Go,静态站点生成,Agent开发,编程" />
+        <meta name="author" content="Hypokinoko" />
+        {{if .CanonicalURL}}<link rel="canonical" href="{{.CanonicalURL}}" />{{else}}<link rel="canonical" href="https://kinoko.fun/" />{{end}}
+        <link rel="alternate" type="application/rss+xml" title="{{.SiteName}}" href="/feed.xml" />
+        <link rel="alternate" hreflang="zh-CN" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
+        <link rel="alternate" hreflang="en" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
+        <link rel="alternate" hreflang="x-default" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="{{.SiteName}}" />
+        <meta property="og:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} - {{.SiteName}}{{else}}{{.SiteName}} - Hypokinoko{{end}}" />
+        <meta property="og:description" content="{{if .Site.Description}}{{.Site.Description}}{{else}}Hypokinoko（阿菇）的个人技术博客{{end}}" />
+        {{if .CanonicalURL}}<meta property="og:url" content="{{.CanonicalURL}}" />{{else}}<meta property="og:url" content="https://kinoko.fun/" />{{end}}
+        <meta property="og:locale" content="zh_CN" />
+        <meta property="og:image" content="{{if .Site.Favicon}}{{.Site.Favicon}}{{else}}https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim{{end}}" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} - {{.SiteName}}{{else}}{{.SiteName}}{{end}}" />
+        <meta name="twitter:description" content="{{if .Site.Description}}{{.Site.Description}}{{else}}Hypokinoko（阿菇）的个人技术博客{{end}}" />
+        <meta name="twitter:image" content="{{if .Site.Favicon}}{{.Site.Favicon}}{{else}}https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim{{end}}" />
+        <!-- Google Site Verification -->
+        <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
+        <!-- Baidu Site Verification -->
+        <meta name="baidu-site-verification" content="YOUR_BAIDU_VERIFICATION_CODE" />
+        {{if .Site.Favicon}}<link rel="icon" href="{{.Site.Favicon}}" />{{end}}
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "{{.SiteName}}",
+            "alternateName": ["雨静", "Rainhush"],
+            "url": "{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}",
+            "description": "{{if .Site.Description}}{{.Site.Description}}{{end}}",
+            "author": {
+                "@type": "Person",
+                "name": "Hypokinoko",
+                "alternateName": ["阿菇", "超级阿菇", "Hypokinoko"],
+                "url": "{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}"
+            },
+            "inLanguage": ["zh-CN", "en"]
+        }
+        </script>
+        <link rel="stylesheet" href="{{.BundleCSS}}" />
+        <script>
+            (function () {
+                var s = localStorage.getItem("theme") || "dark";
+                document.documentElement.setAttribute("data-theme", s);
+            })();
+            function toggleTheme() {
+                var c = document.documentElement.getAttribute("data-theme");
+                var n = c === "dark" ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", n);
+                localStorage.setItem("theme", n);
+            }
+        </script>
+        {{if .HasMermaid}}
+        <script
+            src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
+            defer
+        ></script>
+        {{end}}
+        <script src="{{.BundleJS}}" defer></script>
+    </head>
+    <body class="site-body">
+        <canvas id="rain-canvas"></canvas>
+        {{template "header" .}}
+        <main>{{template "content" .}}</main>
+        {{template "footer" .}}
+    </body>
+</html>
+{{end}}

@@ -1,4 +1,4 @@
-package main
+﻿package main
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	"rainhush/internal/builder"
 	"rainhush/internal/config"
+	initpkg "rainhush/internal/init"
 	"rainhush/internal/pusher"
 	"rainhush/internal/server"
 	"rainhush/internal/watcher"
@@ -22,12 +23,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	if os.Args[1] == "--version" || os.Args[1] == "-v" {
+	// Commands that work without a config file
+	switch os.Args[1] {
+	case "--version", "-v":
 		fmt.Printf("rainhush version %s\n", version)
 		return
-	}
-	if os.Args[1] == "--help" || os.Args[1] == "-h" {
+	case "--help", "-h", "help":
 		printUsage()
+		return
+	case "init":
+		target := "."
+		if len(os.Args) > 2 {
+			target = os.Args[2]
+		}
+		if err := initpkg.Scaffold(target); err != nil {
+			fmt.Fprintf(os.Stderr, "Init failed: %v\n", err)
+			os.Exit(1)
+		}
 		return
 	}
 
@@ -94,12 +106,15 @@ func printUsage() {
 	fmt.Println("Rainhush - Static Site Generator")
 	fmt.Println()
 	fmt.Println("Usage:")
-	fmt.Println("  rainhush build     Build the site from markdown files")
-	fmt.Println("  rainhush test      Build, serve locally, and rebuild on file changes")
-	fmt.Println("  rainhush push      Build and push to remote repository")
-	fmt.Println("  rainhush clear     Remove the public/ build directory")
+	fmt.Println("  rainhush help                  Show this help")
+	fmt.Println("  rainhush init [dir]            Create a new site (default: current directory)")
+	fmt.Println("  rainhush build                 Build the site from markdown files")
+	fmt.Println("  rainhush test                  Build, serve locally, and rebuild on file changes")
+	fmt.Println("  rainhush push                  Build and push to remote repository")
+	fmt.Println("  rainhush clear                 Remove the public/ build directory")
 	fmt.Println()
 	fmt.Println("Flags:")
 	fmt.Println("  -v, --version  Print version")
 	fmt.Println("  -h, --help     Print help")
 }
+

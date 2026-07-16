@@ -1,0 +1,140 @@
+.code-block {
+    margin: 16px 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-base);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--card-bg) 93%, transparent);
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    height: 36px;
+    background: color-mix(in srgb, var(--bg-secondary) 93%, transparent);
+    border-bottom: 1px solid var(--border-color);
+    user-select: none;
+}
+
+.code-block-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.code-block-lang {
+    font-size: 0.75em;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.02em;
+}
+
+.code-block-lang::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    margin-right: 8px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
+.code-block-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    font-size: 0.75em;
+    color: var(--text-muted);
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-base);
+    cursor: pointer;
+    line-height: 1.5;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.copy-btn:hover {
+    background: var(--btn-hover-bg);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.copy-btn:active {
+    background: var(--border-color);
+}
+
+.copy-btn.copied {
+    color: #1a7f37;
+    border-color: #1a7f37;
+    background: rgba(26, 127, 55, 0.12);
+}
+
+.copy-btn.copied .copy-icon {
+    stroke: #1a7f37;
+}
+
+.copy-icon {
+    flex-shrink: 0;
+    stroke: currentColor;
+    transition: stroke 0.15s;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 16px;
+    background: color-mix(in srgb, var(--code-bg) 93%, transparent);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.code-block pre::-webkit-scrollbar {
+    height: 6px;
+}
+
+.code-block pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-block pre::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-base);
+}
+
+.code-block pre::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.code-block code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.88em;
+    line-height: 1.55;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--text-color);
+}
+
+pre.mermaid {
+    margin: 16px 0;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-base);
+    background: color-mix(in srgb, var(--card-bg) 93%, transparent);
+    overflow-x: auto;
+    text-align: center;
+}
+
+pre.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}

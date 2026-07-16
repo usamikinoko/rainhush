@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "rainhush",
-  "version": "0.1.3",
-  "description": "Rainhush - Static Site Generator. Build, serve, and deploy your site with one tool.",
+  "version": "0.1.5",
+  "description": "Rainhush - Fast static site generator built with Go. Markdown to HTML with syntax highlighting, Mermaid support, and deployment tooling.",
   "homepage": "https://github.com/usamikinoko/rainhush",
   "repository": {
     "type": "git",
@@ -9,23 +9,14 @@
   },
   "license": "MIT",
   "author": "Hypokinoko",
-  "bin": {
-    "rainhush": "bin/rainhush"
-  },
-  "scripts": {
-    "postinstall": "node install.mjs"
-  },
-  "os": ["darwin", "linux", "win32"],
-  "cpu": ["x64", "arm64"],
-  "files": [
-    "install.mjs",
-    "bin/"
-  ],
   "keywords": [
     "static-site-generator",
     "ssg",
     "blog",
     "markdown",
     "rainhush"
+  ],
+  "files": [
+    "install.mjs"
   ]
 }
