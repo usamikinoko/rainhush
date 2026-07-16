@@ -1,6 +1,6 @@
-﻿# Rash (Rash)
+# Rash (Rash)
 
-Rash 是一个基于 Go 语言的快速静态站点生成工具 (Static Site Generator)。创建独立博客或个人博客的静态站点，就像 Hugo 一样高效，支持 Markdown 编译、语法高亮、Mermaid 图表渲染，并内置部署工具。
+Rash 是一个基于 Go 语言的轻量级静态站点生成工具 (Static Site Generator)。它将 Markdown 内容转换为完整渲染的静态站点，支持语法高亮、Mermaid 图表渲染，并内置部署工具。
 
 ### 语言
 
@@ -8,51 +8,51 @@ Rash 是一个基于 Go 语言的快速静态站点生成工具 (Static Site Gen
 
 ## 快速入门
 
-### 安装（推荐）
+#### 安装
 
-`ash
-# npm 安装
+```bash
+# npm (推荐)
 npm install -g rash
 
-# 或：从源码编译运行
+# 或：从源码编译
 go install github.com/usamikinoko/rainhush@latest
-`
+```
 
-### 创建站点
+#### 创建站点
 
-`ash
+```bash
 cp _config.example.yaml _config.yaml
-rash build   # 构建站点  public/
-rash test    # 本地预览并支持文件变化重建
+rash build   # 构建站点到 public/
+rash test    # 构建、本地预览并监听文件变化自动重建
 rash push    # 构建并部署
-`
+```
 
-## 命令列表
+## CLI 命令
 
 | 命令 | 描述 |
-|-------|------|
-| ash build | 构建站点到 public/ |
-| ash test | 构建，启动本地服务器，并在 content/、	emplates/、static/ 文件变化时自动重建 |
-| ash push | 构建并部署 |
-| ash clear | 删除 public/ 目录 |
-| ash --version | 打印版本号 |
+|---------|------|
+| `rash build` | 将站点构建到 `public/` |
+| `rash test` | 构建，启动本地服务器，并在 `content/`, `templates/`, `static/` 中的文件变化时自动重建 |
+| `rash push` | 构建并部署生成的站点 |
+| `rash clear` | 删除 `public/` 目录 |
+| `rash --version` | 打印版本号 |
 
 注意：
 
-- Test 服务可生成和部署地址注册，但不会注入浏览器热更新。
-- Build （上传权限每个机器不统一）已为可部署需求开放远程模式（编译后缀版本）理解再次不提供权限。此内容可在同名内容模板中在编译后缀版本中做全部替换。
+- `test` 会监听文件变化并自动重建，但不会注入浏览器热更新。
+- `build` 会保留 `public/.git`，所以基于 Git 的部署方案可以在多次构建之间保持远程配置和历史记录。
 
 ## 配置
 
-将 _config.example.yaml 复制为 _config.yaml：
+将 `_config.example.yaml` 复制为 `_config.yaml`：
 
-`yaml
+```yaml
 server:
   port: 8080
 
 site:
   url: https://example.com
-  description: Your site description for SEO
+  description: 你的站点 SEO 描述
   favicon: https://example.com/favicon.jpg
 
 home:
@@ -65,24 +65,31 @@ deploy:
   mode: git
   remote: git@github.com:username/repo.git
   branch: main
-`
+```
+
+字段说明：
+
+- `home.title` 作为站点标题用于页眉、页脚、页面 `<title>` 和 RSS 订阅源。
+- `deploy.remote` 在 `git` 模式下为必填项，可以是：
+  - 一个 Git 仓库 URL，如 `git@github.com:username/repo.git`
+  - 一个已在 `public/.git` 中配置好的远程仓库名称
 
 ## 部署模式
 
-### Git 模式
+#### Git 模式
 
-deploy.mode: git 将构建后的 public/ 目录推送到 Git 仓库。
+`deploy.mode: git` 将构建后的 `public/` 目录推送到 Git 仓库。
 
-- 如果 deploy.remote 是 Git URL，Rash 会自动配置 deploy 远程仓库。
-- 如果 deploy.remote 是远程仓库名称，该名称必须已在 public/.git 中配置。
+- 如果 `deploy.remote` 是 Git URL，Rash 会自动配置一个 `deploy` 远程仓库。
+- 如果 `deploy.remote` 是远程仓库名称，则该名称必须已在 `public/.git` 中存在。
 
-### Server 模式
+#### Server 模式
 
-deploy.mode: server 通过 SSH/SFTP 将 public/ 上传至 Linux 服务器，并原子化切换发布版本。
+`deploy.mode: server` 通过 SSH/SFTP 将 `public/` 上传到 Linux 服务器，并原子化切换发布版本。
 
 支持的服务器配置：
 
-`yaml
+```yaml
 deploy:
   mode: server
   server:
@@ -92,26 +99,26 @@ deploy:
     path: /var/www/rash
     identity: C:/Users/you/.ssh/id_ed25519
     known_hosts: C:/Users/you/.ssh/known_hosts
-    # 密钥不可用时可选
+    # 当密钥认证无法使用时的可选备选
     password: your-password
-`
+```
 
 ## 内容结构
 
-`	ext
+```text
 content/
 ├── posts/
 ├── about/
 │   └── about.md
 └── friends/
     └── friends.md
-`
+```
 
-### 文章
+#### 文章
 
-文章位于 content/posts/ 目录，使用 YAML 前置元数据和 Markdown 内容。
+文章放在 `content/posts/` 目录中，采用 YAML 前置元数据加 Markdown 内容的格式。
 
-`markdown
+```markdown
 ---
 title: My First Post
 author: Your Name
@@ -128,21 +135,32 @@ Write your post content here.
 <!-- more -->
 
 More content here.
-`
+```
 
 支持的字段：
 
-| 字段 | 必需 | 描述 |
-|-------|-------|------|
-| 	itle | 是 | 文章标题 |
-| date | 是 | 发布日期，格式为 YYYY-MM-DD |
-| uthor | 否 | 作者名称 |
-| updated_at | 否 | 更新日期，格式为 YYYY-MM-DD |
-| location | 否 | 地理位置 |
-| vatar | 否 | 作者头像 URL |
-| cover | 否 | 封面图片 URL |
-| category | 否 | 	echnology 或 life；影响首页分类展示 |
+| 字段 | 必填 | 描述 |
+|-------|------|------|
+| `title` | 是 | 文章标题 |
+| `date` | 是 | 发布日期，格式为 `YYYY-MM-DD` |
+| `author` | 否 | 作者名称 |
+| `updated_at` | 否 | 更新日期，格式为 `YYYY-MM-DD` |
+| `location` | 否 | 地理位置 |
+| `avatar` | 否 | 作者头像 URL |
+| `cover` | 否 | 封面图片 URL |
+| `category` | 否 | `technology` 或 `life`；影响首页分栏展示 |
 
-### About 和 Friends
+实现细节：
 
-content/about/about.md 和 content/friends/friends.md 会作为普通 Markdown 页面渲染，支持可选 	itle 前端元数据。
+- `title` 和 `date` 会在构建时进行校验。
+- Mermaid 支持仅在存在真实的代码块 ```mermaid``` 时启用。
+- `<!-- more -->` 定义了首页和订阅源摘要的截断点。
+
+#### About 和 Friends
+
+`content/about/about.md` 和 `content/friends/friends.md` 会作为普通 Markdown 页面渲染，支持可选的 `title` 前置元数据。
+
+当前行为：
+
+- Friends 链接没有特殊的卡片模式。
+- 如果未填写 `title`，页面会默认显示为 `About` 或 `Friends`。
