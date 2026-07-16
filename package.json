@@ -1,6 +1,6 @@
 ﻿{
   "name": "rainhush",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Rainhush - Fast static site generator built with Go. Markdown to HTML with syntax highlighting, Mermaid support, and deployment tooling.",
   "homepage": "https://github.com/usamikinoko/rainhush",
   "repository": {
