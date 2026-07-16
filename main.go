@@ -5,17 +5,30 @@ import (
 	"fmt"
 	"os"
 
-	"rainhush/internal/builder"
-	"rainhush/internal/config"
-	"rainhush/internal/pusher"
-	"rainhush/internal/server"
-	"rainhush/internal/watcher"
+	"rash/internal/builder"
+	"rash/internal/config"
+	"rash/internal/pusher"
+	"rash/internal/server"
+	"rash/internal/watcher"
+)
+
+var (
+	version = "dev"
 )
 
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
 		os.Exit(1)
+	}
+
+	if os.Args[1] == "--version" || os.Args[1] == "-v" {
+		fmt.Printf("rash version %s\n", version)
+		return
+	}
+	if os.Args[1] == "--help" || os.Args[1] == "-h" {
+		printUsage()
+		return
 	}
 
 	if err := config.Load(); err != nil {
@@ -78,11 +91,15 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Println("Rainhush - Static Site Generator")
+	fmt.Println("Rash - Static Site Generator")
 	fmt.Println()
 	fmt.Println("Usage:")
-	fmt.Println("  go run . build    Build the site from markdown files")
-	fmt.Println("  go run . test     Build, serve locally, and rebuild on file changes")
-	fmt.Println("  go run . push     Build and push to remote repository")
-	fmt.Println("  go run . clear    Remove the public/ build directory")
+	fmt.Println("  rash build     Build the site from markdown files")
+	fmt.Println("  rash test      Build, serve locally, and rebuild on file changes")
+	fmt.Println("  rash push      Build and push to remote repository")
+	fmt.Println("  rash clear     Remove the public/ build directory")
+	fmt.Println()
+	fmt.Println("Flags:")
+	fmt.Println("  -v, --version  Print version")
+	fmt.Println("  -h, --help     Print help")
 }

@@ -1,24 +1,37 @@
-# Rainhush
+# Rash
 
-Hypokinoko（阿菇）的个人博客 — 基于 Go 的静态站点生成器 / 雨静 Rainhush
+Hypokinoko（阿葸）的个人博客 — 基于 Go 的静态站点生成工具 / Rash
 
 ## Quick Start
 
+### Install
+
+```bash
+# npm (recommended)
+npm install -g rash
+
+# or: build from source
+go install github.com/usamikinoko/rainhush@latest
+```
+
+### Create a site
+
 ```bash
 cp _config.example.yaml _config.yaml
-go run . build
-go run . test
-go run . push
+rash build   # 构建站瀵  public/
+rash test    # 本地预览并带听文件变化
+rash push    # 构建并部署
 ```
 
 ## CLI Commands
 
 | Command | Description |
 |---------|-------------|
-| `go run . build` | Build the site into `public/` |
-| `go run . test` | Build, serve locally, and rebuild when files under `content/`, `templates/`, or `static/` change |
-| `go run . push` | Build and deploy the generated site |
-| `go run . clear` | Remove `public/` |
+| `rash build` | Build the site into `public/` |
+| `rash test` | Build, serve locally, and rebuild when files under `content/`, `templates/`, or `static/` change |
+| `rash push` | Build and deploy the generated site |
+| `rash clear` | Remove `public/` |
+| `rash --version` | Print version |
 
 Notes:
 
@@ -39,7 +52,7 @@ site:
   favicon: https://example.com/favicon.jpg
 
 home:
-  title: Rainhush
+  title: Rash
   subtitle: Planned, Tracked, Delivered.
   avatar: https://example.com/avatar.jpg
   owner: Hypokinoko
@@ -63,7 +76,7 @@ Field notes:
 
 `deploy.mode: git` pushes the built `public/` directory to Git.
 
-- If `deploy.remote` is a Git URL, Fake Mirror configures an internal `deploy` remote automatically.
+- If `deploy.remote` is a Git URL, Rash configures an internal `deploy` remote automatically.
 - If `deploy.remote` is a remote name, that remote must already exist in `public/.git`.
 
 ### Server mode
@@ -79,7 +92,7 @@ deploy:
     host: example.com
     port: 22
     user: deploy
-    path: /var/www/rainhush
+    path: /var/www/rash
     identity: C:/Users/you/.ssh/id_ed25519
     known_hosts: C:/Users/you/.ssh/known_hosts
     # Optional fallback when key auth is unavailable
@@ -123,7 +136,7 @@ More content here.
 Supported fields:
 
 | Field | Required | Description |
-|-------|----------|-------------|
+|-------|--------|------------|
 | `title` | Yes | Post title |
 | `date` | Yes | Publication date in `YYYY-MM-DD` format |
 | `author` | No | Author name |
@@ -147,12 +160,3 @@ Current behavior:
 
 - There is no special card schema for friends links.
 - If `title` is omitted, the page falls back to `About` or `Friends`.
-
-## Review-Driven Fixes In This Version
-
-- Preserved `public/.git` during rebuilds so Git deploys remain stable.
-- Fixed cache headers for pretty URLs like `/articles/post-slug/`, which were previously cached like static assets.
-- Removed hardcoded site branding from templates and derived it from configuration.
-- Replaced fragile Mermaid detection based on rendered text matching with fenced-block detection.
-- Added basic tests for build output preservation and cache policy behavior.
-- Removed dead front-end assets and cleaned unused styles/listeners.

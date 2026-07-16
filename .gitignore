@@ -27,3 +27,15 @@ content/*
 content/navidation/*
 !content/navidation/navigation.md
 .tmp/
+
+# npm
+node_modules/
+bin/rash
+bin/rash.exe
+*.tgz
+*.tar.gz
+*.zip
+
+# compiled binary
+rash.exe
+rainhush.exe
