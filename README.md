@@ -1,6 +1,6 @@
 # Rash
 
-Rash is a fast, lightweight static site generator built with Go. It transforms Markdown content into a fully-rendered static site with syntax highlighting, Mermaid diagram support, and built-in deployment tooling.
+Rainhush is a fast, lightweight static site generator built with Go. It transforms Markdown content into a fully-rendered static site with syntax highlighting, Mermaid diagram support, and built-in deployment tooling.
 
 ### Language
 
@@ -12,7 +12,7 @@ Rash is a fast, lightweight static site generator built with Go. It transforms M
 
 ```bash
 # npm (recommended)
-npm install -g rash
+npm install -g rainhush
 
 # or: build from source
 go install github.com/usamikinoko/rainhush@latest
@@ -22,20 +22,20 @@ go install github.com/usamikinoko/rainhush@latest
 
 ```bash
 cp _config.example.yaml _config.yaml
-rash build   # Build the site into public/
-rash test    # Build, serve locally, and rebuild on file changes
-rash push    # Build and deploy
+rainhush build   # Build the site into public/
+rainhush test    # Build, serve locally, and rebuild on file changes
+rainhush push    # Build and deploy
 ```
 
 ## CLI Commands
 
 | Command | Description |
 |---------|-------------|
-| `rash build` | Build the site into `public/` |
-| `rash test` | Build, serve locally, and rebuild when files under `content/`, `templates/`, or `static/` change |
-| `rash push` | Build and deploy the generated site |
-| `rash clear` | Remove `public/` |
-| `rash --version` | Print version |
+| `rainhush build` | Build the site into `public/` |
+| `rainhush test` | Build, serve locally, and rebuild when files under `content/`, `templates/`, or `static/` change |
+| `rainhush push` | Build and deploy the generated site |
+| `rainhush clear` | Remove `public/` |
+| `rainhush --version` | Print version |
 
 Notes:
 
@@ -56,10 +56,10 @@ site:
   favicon: https://example.com/favicon.jpg
 
 home:
-  title: Rash
+  title: Rainhush
   subtitle: My Blog
   avatar: https://example.com/avatar.jpg
-  owner: Rash User
+  owner: Rainhush User
 
 deploy:
   mode: git
@@ -80,7 +80,7 @@ Field notes:
 
 `deploy.mode: git` pushes the built `public/` directory to Git.
 
-- If `deploy.remote` is a Git URL, Rash configures an internal `deploy` remote automatically.
+- If `deploy.remote` is a Git URL, Rainhush configures an internal `deploy` remote automatically.
 - If `deploy.remote` is a remote name, that remote must already exist in `public/.git`.
 
 #### Server mode
@@ -96,7 +96,7 @@ deploy:
     host: example.com
     port: 22
     user: deploy
-    path: /var/www/rash
+    path: /var/www/rainhush
     identity: C:/Users/you/.ssh/id_ed25519
     known_hosts: C:/Users/you/.ssh/known_hosts
     # Optional fallback when key auth is unavailable

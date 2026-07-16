@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"rash/internal/config"
+	"rainhush/internal/config"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"

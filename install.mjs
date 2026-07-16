@@ -1,4 +1,4 @@
-﻿import { readFile, chmod, mkdir, writeFile, rm } from "node:fs/promises";
+import { readFile, chmod, mkdir, writeFile, rm } from "node:fs/promises";
 import { createWriteStream } from "node:fs";
 import { pipeline } from "node:stream/promises";
 import { join, dirname } from "node:path";
@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const OWNER = "usamikinoko";
 const REPO = "rainhush";
-const BIN_NAME = process.platform === "win32" ? "rash.exe" : "rash";
+const BIN_NAME = process.platform === "win32" ? "rainhush.exe" : "rainhush";
 const BIN_DIR = join(__dirname, "bin");
 const BIN_PATH = join(BIN_DIR, BIN_NAME);
 
@@ -28,7 +28,7 @@ function getAssetName(version) {
   }[process.arch] || process.arch;
 
   const ext = process.platform === "win32" ? ".zip" : ".tar.gz";
-  return `rash_${platform}_${arch}${ext}`;
+  return `rainhush_${platform}_${arch}${ext}`;
 }
 
 async function getVersion() {
@@ -59,8 +59,8 @@ async function extractArchive(archivePath, extractTo) {
 }
 
 function findBinary(dir) {
-  // On Windows, npm expects the binary at bin/rash, and creates a rash.cmd shim.
-  // But the actual binary is rash.exe. The shim handles this transparently.
+  // On Windows, npm expects the binary at bin/rainhush, and creates a rainhush.cmd shim.
+  // But the actual binary is rainhush.exe. The shim handles this transparently.
   return join(dir, BIN_NAME);
 }
 
@@ -85,7 +85,7 @@ async function main() {
   const archivePath = join(BIN_DIR, assetName);
 
   try {
-    console.log(`Downloading rash v${version} for ${process.platform}-${process.arch}...`);
+    console.log(`Downloading rainhush v${version} for ${process.platform}-${process.arch}...`);
     await downloadBinary(downloadUrl, archivePath);
   } catch (e) {
     console.log(`Release v${version} not found, trying latest...`);
@@ -106,10 +106,10 @@ async function main() {
     await chmod(BIN_PATH, 0o755);
   }
 
-  console.log("Rash installed successfully.");
+  console.log("Rainhush installed successfully.");
 }
 
 main().catch((err) => {
-  console.warn("Rash binary download failed:", err.message);
+  console.warn("Rainhush binary download failed:", err.message);
   console.warn("Build from source: go install github.com/usamikinoko/rainhush@latest");
 });

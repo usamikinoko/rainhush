@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"rash/internal/config"
-	"rash/internal/markdown"
+	"rainhush/internal/config"
+	"rainhush/internal/markdown"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"

@@ -1,4 +1,4 @@
-﻿package config
+package config
 
 import (
 	"os"
@@ -73,7 +73,7 @@ func Load() error {
 		Cfg.Deploy.Server.Port = 22
 	}
 	if Cfg.Deploy.Server.Path == "" {
-	Cfg.Deploy.Server.Path = "/var/www/rash"
+	Cfg.Deploy.Server.Path = "/var/www/rainhush"
 	}
 
 	return nil

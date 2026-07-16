@@ -1,0 +1,3 @@
+﻿#!/usr/bin/env bash
+echo "Rash is being installed... The binary will be available after postinstall."
+echo "If you see this, run: npm install -g @hypokinoko/rash"

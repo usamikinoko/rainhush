@@ -1,4 +1,4 @@
-﻿name: Release
+name: Release
 
 on:
   push:
@@ -37,24 +37,24 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
-          BIN="rash"
-          [ "$GOOS" = "windows" ] && BIN="rash.exe"
+          BIN="rainhush"
+          [ "$GOOS" = "windows" ] && BIN="rainhush.exe"
           go build -trimpath -ldflags="-s -w -X main.version=${VERSION#v}" -o "$BIN" .
 
       - name: Package (unix)
         if: matrix.goos != "windows"
         shell: bash
         run: |
-          ASSET="rash_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz"
-          tar -czf "$ASSET" rash
+          ASSET="rainhush_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz"
+          tar -czf "$ASSET" rainhush
           echo "asset_name=$ASSET" >> "$GITHUB_ENV"
 
       - name: Package (windows)
         if: matrix.goos == "windows"
         shell: pwsh
         run: |
-          $ASSET = "rash_windows_${{ matrix.goarch }}.zip"
-          Compress-Archive -Path rash.exe -DestinationPath $ASSET
+          $ASSET = "rainhush_windows_${{ matrix.goarch }}.zip"
+          Compress-Archive -Path rainhush.exe -DestinationPath $ASSET
           "asset_name=$ASSET" | Add-Content -Path $env:GITHUB_ENV -Encoding UTF8
 
       - name: Upload build artifact

@@ -1,4 +1,4 @@
- module rash
+ module rainhush
 
 go 1.25.0
 

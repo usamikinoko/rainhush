@@ -30,12 +30,12 @@ content/navidation/*
 
 # npm
 node_modules/
-bin/rash
-bin/rash.exe
+!bin/rainhush
+bin/rainhush.exe
 *.tgz
 *.tar.gz
 *.zip
 
 # compiled binary
-rash.exe
+rainhush.exe
 rainhush.exe

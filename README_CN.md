@@ -1,4 +1,4 @@
-# Rash (Rash)
+# Rainhush (Rainhush)
 
 Rash 是一个基于 Go 语言的轻量级静态站点生成工具 (Static Site Generator)。它将 Markdown 内容转换为完整渲染的静态站点，支持语法高亮、Mermaid 图表渲染，并内置部署工具。
 
@@ -12,7 +12,7 @@ Rash 是一个基于 Go 语言的轻量级静态站点生成工具 (Static Site 
 
 ```bash
 # npm (推荐)
-npm install -g rash
+npm install -g rainhush
 
 # 或：从源码编译
 go install github.com/usamikinoko/rainhush@latest
@@ -22,20 +22,20 @@ go install github.com/usamikinoko/rainhush@latest
 
 ```bash
 cp _config.example.yaml _config.yaml
-rash build   # 构建站点到 public/
-rash test    # 构建、本地预览并监听文件变化自动重建
-rash push    # 构建并部署
+rainhush build   # 构建站点到 public/
+rainhush test    # 构建、本地预览并监听文件变化自动重建
+rainhush push    # 构建并部署
 ```
 
 ## CLI 命令
 
 | 命令 | 描述 |
 |---------|------|
-| `rash build` | 将站点构建到 `public/` |
-| `rash test` | 构建，启动本地服务器，并在 `content/`, `templates/`, `static/` 中的文件变化时自动重建 |
-| `rash push` | 构建并部署生成的站点 |
-| `rash clear` | 删除 `public/` 目录 |
-| `rash --version` | 打印版本号 |
+| `rainhush build` | 将站点构建到 `public/` |
+| `rainhush test` | 构建，启动本地服务器，并在 `content/`, `templates/`, `static/` 中的文件变化时自动重建 |
+| `rainhush push` | 构建并部署生成的站点 |
+| `rainhush clear` | 删除 `public/` 目录 |
+| `rainhush --version` | 打印版本号 |
 
 注意：
 
@@ -56,10 +56,10 @@ site:
   favicon: https://example.com/favicon.jpg
 
 home:
-  title: Rash
+  title: Rainhush
   subtitle: My Blog
   avatar: https://example.com/avatar.jpg
-  owner: Rash User
+  owner: Rainhush User
 
 deploy:
   mode: git
@@ -80,7 +80,7 @@ deploy:
 
 `deploy.mode: git` 将构建后的 `public/` 目录推送到 Git 仓库。
 
-- 如果 `deploy.remote` 是 Git URL，Rash 会自动配置一个 `deploy` 远程仓库。
+- 如果 `deploy.remote` 是 Git URL，Rainhush 会自动配置一个 `deploy` 远程仓库。
 - 如果 `deploy.remote` 是远程仓库名称，则该名称必须已在 `public/.git` 中存在。
 
 #### Server 模式
@@ -96,7 +96,7 @@ deploy:
     host: example.com
     port: 22
     user: deploy
-    path: /var/www/rash
+    path: /var/www/rainhush
     identity: C:/Users/you/.ssh/id_ed25519
     known_hosts: C:/Users/you/.ssh/known_hosts
     # 当密钥认证无法使用时的可选备选

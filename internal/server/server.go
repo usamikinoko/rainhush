@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"rash/internal/config"
+	"rainhush/internal/config"
 )
 
 func Serve(ctx context.Context) error {
