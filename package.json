@@ -1,6 +1,6 @@
 ﻿{
   "name": "rash",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Rash - Static Site Generator. Build, serve, and deploy your site with one tool.",
   "homepage": "https://github.com/usamikinoko/rainhush",
   "repository": {
