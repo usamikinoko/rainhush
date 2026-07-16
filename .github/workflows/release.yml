@@ -1,4 +1,4 @@
-name: Release
+﻿name: Release
 
 on:
   push:
@@ -35,6 +35,11 @@ jobs:
             arch: arm64
             goos: darwin
             goarch: arm64
+          - os: windows-latest
+            target: windows
+            arch: "386"
+            goos: windows
+            goarch: "386"
           - os: windows-latest
             target: windows
             arch: amd64

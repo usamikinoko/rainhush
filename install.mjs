@@ -1,4 +1,4 @@
-import { readFile, chmod, mkdir, writeFile, rm } from "node:fs/promises";
+﻿import { readFile, chmod, mkdir, writeFile, rm } from "node:fs/promises";
 import { createWriteStream } from "node:fs";
 import { pipeline } from "node:stream/promises";
 import { join, dirname } from "node:path";
@@ -24,6 +24,7 @@ function getAssetName(version) {
   const arch = {
     "x64": "amd64",
     "arm64": "arm64",
+    "ia32": "386",
   }[process.arch] || process.arch;
 
   const ext = process.platform === "win32" ? ".zip" : ".tar.gz";

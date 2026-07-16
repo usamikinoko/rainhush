@@ -1,10 +1,14 @@
 # Rash
 
-Hypokinoko（阿葸）的个人博客 — 基于 Go 的静态站点生成工具 / Rash
+Rash is a fast, lightweight static site generator built with Go. It transforms Markdown content into a fully-rendered static site with syntax highlighting, Mermaid diagram support, and built-in deployment tooling.
+
+### Language
+
+[English](./README.md) | [中文](./README_CN.md)
 
 ## Quick Start
 
-### Install
+#### Install
 
 ```bash
 # npm (recommended)
@@ -14,13 +18,13 @@ npm install -g rash
 go install github.com/usamikinoko/rainhush@latest
 ```
 
-### Create a site
+#### Create a site
 
 ```bash
 cp _config.example.yaml _config.yaml
-rash build   # 构建站瀵  public/
-rash test    # 本地预览并带听文件变化
-rash push    # 构建并部署
+rash build   # Build the site into public/
+rash test    # Build, serve locally, and rebuild on file changes
+rash push    # Build and deploy
 ```
 
 ## CLI Commands
@@ -35,8 +39,8 @@ rash push    # 构建并部署
 
 Notes:
 
-- `test` does file watching and rebuilds, but it does **not** inject browser live reload.
-- `build` now preserves `public/.git`, so Git-based deployments keep their remote configuration and history between builds.
+- `Test` does file watching and rebuilds, but it does **not** inject browser live reload.
+- `Build` preserves `public/.git`, so Git-based deployments keep their remote configuration and history between builds.
 
 ## Configuration
 
@@ -53,9 +57,9 @@ site:
 
 home:
   title: Rash
-  subtitle: Planned, Tracked, Delivered.
+  subtitle: My Blog
   avatar: https://example.com/avatar.jpg
-  owner: Hypokinoko
+  owner: Rash User
 
 deploy:
   mode: git
@@ -72,14 +76,14 @@ Field notes:
 
 ## Deploy Modes
 
-### Git mode
+#### Git mode
 
 `deploy.mode: git` pushes the built `public/` directory to Git.
 
 - If `deploy.remote` is a Git URL, Rash configures an internal `deploy` remote automatically.
 - If `deploy.remote` is a remote name, that remote must already exist in `public/.git`.
 
-### Server mode
+#### Server mode
 
 `deploy.mode: server` uploads `public/` to a Linux server over SSH/SFTP and swaps releases atomically.
 
@@ -110,7 +114,7 @@ content/
     └── friends.md
 ```
 
-### Posts
+#### Posts
 
 Posts live in `content/posts/` and use YAML frontmatter plus Markdown content.
 
