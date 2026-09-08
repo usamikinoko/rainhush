@@ -184,7 +184,7 @@ updated_at: 2026-07-05
 location: Shanghai
 avatar: https://example.com/avatar.jpg
 cover: https://example.com/cover.jpg
-category: technology
+category: tech
 ---
 
 Write your post content here.
@@ -205,7 +205,7 @@ Supported fields:
 | `location` | No | Geographic location |
 | `avatar` | No | Author avatar URL |
 | `cover` | No | Cover image URL |
-| `category` | No | `technology` or `life`; affects the homepage column |
+| `category` | No | `tech`, `lite-tech`, `trivia`, or `life`; missing or unknown values fall back to `life`. Affects the homepage grid |
 
 Implementation details:
 

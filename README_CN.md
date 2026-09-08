@@ -184,7 +184,7 @@ updated_at: 2026-07-05
 location: Shanghai
 avatar: https://example.com/avatar.jpg
 cover: https://example.com/cover.jpg
-category: technology
+category: tech
 ---
 
 Write your post content here.
@@ -205,7 +205,7 @@ More content here.
 | `location` | 否 | 地理位置 |
 | `avatar` | 否 | 作者头像 URL |
 | `cover` | 否 | 封面图片 URL |
-| `category` | 否 | `technology` 或 `life`；影响首页分栏展示 |
+| `category` | 否 | `tech`、`lite-tech`、`trivia`、`life` 之一；缺失或未知值归档到 `life`。影响首页分栏展示 |
 
 实现细节：
 

@@ -1,12 +1,39 @@
 (function () {
   var requestID = 0;
+  var activeController = null;
+  var prefetches = new Map();
 
   function isNavigable(link, event) {
-    if (!link || link.target && link.target !== "_self" || link.hasAttribute("download")) return false;
+    if (!link || (link.target && link.target !== "_self") || link.hasAttribute("download")) return false;
     if (event && (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return false;
     var url = new URL(link.href, location.href);
     if (url.origin !== location.origin || url.protocol !== location.protocol) return false;
     return url.pathname !== location.pathname || url.search !== location.search;
+  }
+
+  function pageKey(url) {
+    var keyURL = new URL(url.href);
+    keyURL.hash = "";
+    return keyURL.href;
+  }
+
+  function fetchPage(url, signal) {
+    var key = pageKey(url);
+    if (prefetches.has(key)) return prefetches.get(key);
+    var request = fetch(key, {
+      credentials: "same-origin",
+      signal: signal,
+      headers: { Accept: "text/html" },
+    }).then(function (response) {
+      if (!response.ok) throw new Error("navigation failed");
+      var type = response.headers.get("content-type") || "";
+      if (type && type.indexOf("text/html") === -1) throw new Error("navigation returned non-HTML");
+      return response.text();
+    });
+    prefetches.set(key, request);
+    request.catch(function () { prefetches.delete(key); });
+    window.setTimeout(function () { prefetches.delete(key); }, 10000);
+    return request;
   }
 
   function updatePage(doc) {
@@ -33,13 +60,15 @@
 
   function visit(url, replace) {
     var id = ++requestID;
+    if (activeController) activeController.abort();
+    activeController = new AbortController();
+    var controller = activeController;
     var main = document.querySelector("main");
     if (main) main.setAttribute("aria-busy", "true");
-    fetch(url.href, { credentials: "same-origin" }).then(function (response) {
-      if (!response.ok) throw new Error("navigation failed");
-      return response.text();
-    }).then(function (html) {
+
+    fetchPage(url, controller.signal).then(function (html) {
       if (id !== requestID) return;
+      prefetches.delete(pageKey(url));
       var doc = new DOMParser().parseFromString(html, "text/html");
       if (!updatePage(doc)) throw new Error("invalid page");
       if (replace) history.replaceState(null, "", url.href);
@@ -50,17 +79,31 @@
       } else {
         window.scrollTo(0, 0);
       }
-    }).catch(function () {
-      if (id === requestID) location.href = url.href;
+    }).catch(function (error) {
+      if (id !== requestID || error.name === "AbortError") return;
+      location.href = url.href;
     }).then(function () {
       if (id !== requestID) return;
+      if (activeController === controller) activeController = null;
       var current = document.querySelector("main");
       if (current) current.removeAttribute("aria-busy");
     });
   }
 
+  document.addEventListener("pointerover", function (event) {
+    var link = event.target.closest && event.target.closest("a");
+    if (!isNavigable(link)) return;
+    fetchPage(new URL(link.href, location.href)).catch(function () {});
+  });
+
+  document.addEventListener("focusin", function (event) {
+    var link = event.target.closest && event.target.closest("a");
+    if (!isNavigable(link)) return;
+    fetchPage(new URL(link.href, location.href)).catch(function () {});
+  });
+
   document.addEventListener("click", function (event) {
-    var link = event.target.closest("a");
+    var link = event.target.closest && event.target.closest("a");
     if (!isNavigable(link, event)) return;
     event.preventDefault();
     visit(new URL(link.href, location.href), false);

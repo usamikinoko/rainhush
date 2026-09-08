@@ -11,7 +11,16 @@
             decoding="sync"
         />
         <h1 class="home-hero-title">{{.Home.Title}}</h1>
-        <p class="home-hero-subtitle">{{.Home.SubTitle}}</p>
+        <div class="home-hero-stats">
+            <div class="home-hero-stat">
+                <span class="home-hero-stat-num">{{.TotalPosts}}</span>
+                <span class="home-hero-stat-label">Articles</span>
+            </div>
+            <div class="home-hero-stat">
+                <span class="home-hero-stat-num">{{.TotalWords}}</span>
+                <span class="home-hero-stat-label">Words</span>
+            </div>
+        </div>
         <p class="home-hero-owner">{{.Home.Owner}}</p>
         <div class="home-hero-divider"></div>
     </div>

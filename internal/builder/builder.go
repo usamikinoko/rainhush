@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"rainhush/internal/config"
 	"rainhush/internal/markdown"
@@ -45,6 +46,7 @@ type Post struct {
 	Filename    string
 	Excerpt     string
 	PublishedAt time.Time
+	WordCount   int
 }
 
 type navMap map[string]string
@@ -76,8 +78,6 @@ type buildContext struct {
 	bundleJS   string
 }
 
-// Markdown 内容由站点作者维护，允许其使用表格、徽章等原始 HTML。
-// 不应用于不受信任的用户输入。
 var md = goldmark.New(
 	goldmark.WithExtensions(
 		goldmarkext.Table,
@@ -236,24 +236,38 @@ func prepareOutputDir(root string) error {
 
 func loadPosts(postsDir string) ([]*Post, error) {
 	var posts []*Post
+	seen := make(map[string]bool)
 
-	entries, err := os.ReadDir(postsDir)
+	err := filepath.Walk(postsDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if strings.HasPrefix(info.Name(), ".") {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasSuffix(info.Name(), ".md") {
+			return nil
+		}
+		filename := strings.TrimSuffix(info.Name(), ".md")
+		if seen[filename] {
+			return fmt.Errorf("duplicate post filename %q under %s", filename, postsDir)
+		}
+		seen[filename] = true
+		post, err := parsePost(path)
+		if err != nil {
+			return err
+		}
+		posts = append(posts, post)
+		return nil
+	})
 	if err != nil {
 		if os.IsNotExist(err) {
 			return posts, nil
 		}
-		return nil, fmt.Errorf("read posts directory: %w", err)
-	}
-
-	for _, entry := range entries {
-		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".md") {
-			continue
-		}
-		post, err := parsePost(filepath.Join(postsDir, entry.Name()))
-		if err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
+		return nil, fmt.Errorf("walk posts directory: %w", err)
 	}
 
 	return posts, nil
@@ -330,7 +344,25 @@ func parsePost(path string) (*Post, error) {
 		Filename:    filename,
 		Excerpt:     extractExcerpt(body),
 		PublishedAt: publishedAt,
+		WordCount:   wordCount(body),
 	}, nil
+}
+
+func wordCount(body string) int {
+	n := 0
+	for _, r := range body {
+		if !unicode.IsSpace(r) {
+			n++
+		}
+	}
+	return n
+}
+
+func formatWords(n int) string {
+	if n >= 1000000 {
+		return strconv.Itoa((n+500000)/1000000) + "M"
+	}
+	return strconv.Itoa((n+500)/1000) + "K"
 }
 
 func validatePostFrontmatter(path string, fm *Frontmatter) (time.Time, error) {
@@ -368,7 +400,6 @@ func splitFrontmatter(content string) (string, string) {
 	if idx := strings.Index(rest, "\n---\n"); idx >= 0 {
 		return rest[:idx], rest[idx+5:]
 	}
-	// 结尾 `---` 后无换行的 EOF 情况也视为合法 front matter 闭合
 	if strings.HasSuffix(rest, "\n---") {
 		return rest[:len(rest)-4], ""
 	}
@@ -421,26 +452,31 @@ func (ctx *buildContext) renderPost(tmpl *template.Template, post *Post) error {
 func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) error {
 	perCategory := 3
 
-	var techPosts, lifePosts, liteTechPosts, othersPosts []*Post
+	var techPosts, liteTechPosts, triviaPosts, lifePosts []*Post
 	for _, p := range posts {
 		switch p.Category {
-		case "technology":
+		case "tech":
 			if len(techPosts) < perCategory {
 				techPosts = append(techPosts, p)
-			}
-		case "life":
-			if len(lifePosts) < perCategory {
-				lifePosts = append(lifePosts, p)
 			}
 		case "lite-tech":
 			if len(liteTechPosts) < perCategory {
 				liteTechPosts = append(liteTechPosts, p)
 			}
+		case "trivia":
+			if len(triviaPosts) < perCategory {
+				triviaPosts = append(triviaPosts, p)
+			}
 		default:
-			if len(othersPosts) < perCategory {
-				othersPosts = append(othersPosts, p)
+			if len(lifePosts) < perCategory {
+				lifePosts = append(lifePosts, p)
 			}
 		}
+	}
+
+	totalWords := 0
+	for _, p := range posts {
+		totalWords += p.WordCount
 	}
 
 	cells, dl, ml, ht := computeHeatmap(posts)
@@ -448,15 +484,16 @@ func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) err
 	return ctx.writeHTML(tmpl, filepath.Join("public", "index.html"), ctx.pageData(map[string]interface{}{
 		"Title": "Home",
 		"Home": map[string]string{
-			"Title":    config.Cfg.Home.Title,
-			"SubTitle": config.Cfg.Home.SubTitle,
-			"Avatar":   config.Cfg.Home.Avatar,
-			"Owner":    config.Cfg.Home.Owner,
+			"Title":  config.Cfg.Home.Title,
+			"Avatar": config.Cfg.Home.Avatar,
+			"Owner":  config.Cfg.Home.Owner,
 		},
 		"TechPosts":        techPosts,
-		"LifePosts":        lifePosts,
 		"LiteTechPosts":    liteTechPosts,
-		"OthersPosts":      othersPosts,
+		"TriviaPosts":      triviaPosts,
+		"LifePosts":        lifePosts,
+		"TotalPosts":       len(posts),
+		"TotalWords":       formatWords(totalWords),
 		"Nav":              navHome,
 		"HeatmapCells":     cells,
 		"HeatmapDayLabels": dl,
@@ -517,7 +554,6 @@ func (ctx *buildContext) renderArticles(tmpl *template.Template, posts []*Post) 
 			"Posts":        posts[start:end],
 			"Page":         page,
 			"TotalPages":   totalPages,
-			"TotalPosts":   len(posts),
 			"HasPrev":      page > 1,
 			"PrevURL":      prevURL,
 			"HasNext":      page < totalPages,
@@ -638,7 +674,6 @@ func computeHeatmap(posts []*Post) (cells []heatmapCell, dayLabels []string, mon
 		total++
 	}
 
-	// Column-major: 53 weeks * 7 days = 371 cells
 	cells = make([]heatmapCell, 53*7)
 	for w := 0; w < 53; w++ {
 		for d := 0; d < 7; d++ {

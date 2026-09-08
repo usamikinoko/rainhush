@@ -7,11 +7,6 @@
     margin-bottom: 4px;
 }
 
-.articles-header .articles-count {
-    color: var(--text-muted);
-    font-size: 0.85em;
-}
-
 .post-list-item {
     display: flex;
     justify-content: space-between;

@@ -18,6 +18,7 @@ npm test
 - `go run . clean`：清理 `public/`
 - `go run . push`：先构建，再按 `_config.yaml` 中的部署配置推送
 - `go test ./...` / `npm test`：运行 Go 测试
+- 站内导航会在鼠标悬停或键盘聚焦链接时预取同源 HTML，并在点击时复用请求；首次跳转仍可能受部署站点/CDN 的 TTFB 限制，可在浏览器 Network 面板检查文档请求。
 - Git 部署模式建议使用 `deploy.branch: gh-pages`，因为 `push` 会覆盖部署分支内容
 
 ## 推送日常更新

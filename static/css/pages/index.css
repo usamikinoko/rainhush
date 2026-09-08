@@ -19,10 +19,27 @@
     margin-bottom: 4px;
 }
 
-.home-hero-subtitle {
-    font-size: 0.95em;
-    color: var(--text-muted);
+.home-hero-stats {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 16px;
     margin-bottom: 6px;
+}
+
+.home-hero-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.home-hero-stat-num {
+    color: var(--primary-color);
+}
+
+.home-hero-stat-label {
+    font-size: 0.9em;
+    color: var(--text-muted);
 }
 
 .home-hero-owner {
