@@ -17,13 +17,33 @@
     return keyURL.href;
   }
 
+  function fragmentURL(url) {
+    var path = url.pathname;
+    if (path.charAt(path.length - 1) === "/") path += "index.frag.html";
+    else if (path.slice(-5) === ".html") path = path.slice(0, -5) + ".frag.html";
+    else path += ".frag.html";
+    var frag = new URL(url.href);
+    frag.pathname = path;
+    frag.search = "";
+    frag.hash = "";
+    return frag;
+  }
+
   function fetchPage(url, signal) {
-    var key = pageKey(url);
+    var frag = fragmentURL(url);
+    var key = pageKey(frag);
     if (prefetches.has(key)) return prefetches.get(key);
-    var request = fetch(key, {
+    var request = fetch(frag, {
       credentials: "same-origin",
       signal: signal,
       headers: { Accept: "text/html" },
+    }).then(function (response) {
+      if (!response.ok) return fetch(url, {
+        credentials: "same-origin",
+        signal: signal,
+        headers: { Accept: "text/html" },
+      });
+      return response;
     }).then(function (response) {
       if (!response.ok) throw new Error("navigation failed");
       var type = response.headers.get("content-type") || "";
@@ -66,20 +86,26 @@
     activeController = new AbortController();
     var controller = activeController;
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var start = performance.now();
+    var frag = fragmentURL(url);
     var main = document.querySelector("main");
-    if (main) {
-      main.setAttribute("aria-busy", "true");
-      if (!reduced) main.classList.add("page-leaving");
+    if (main) main.setAttribute("aria-busy", "true");
+    var exitStart = null;
+    if (!reduced && main && prefetches.has(pageKey(frag))) {
+      exitStart = performance.now();
+      main.classList.add("page-leaving");
     }
 
     fetchPage(url, controller.signal).then(function (html) {
       if (id !== requestID) return;
-      var wait = reduced ? 0 : Math.max(0, exitDuration - (performance.now() - start));
+      if (exitStart === null && !reduced && main) {
+        exitStart = performance.now();
+        main.classList.add("page-leaving");
+      }
+      var wait = reduced || exitStart === null ? 0 : Math.max(0, exitDuration - (performance.now() - exitStart));
       return new Promise(function (resolve) {
         setTimeout(resolve, wait);
       }).then(function () {
-        prefetches.delete(pageKey(url));
+        prefetches.delete(pageKey(frag));
         var doc = new DOMParser().parseFromString(html, "text/html");
         if (!updatePage(doc)) throw new Error("invalid page");
         if (replace) history.replaceState(null, "", url.href);

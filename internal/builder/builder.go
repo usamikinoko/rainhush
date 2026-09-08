@@ -816,7 +816,23 @@ func (ctx *buildContext) writeHTML(tmpl *template.Template, path string, data ma
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
 	}
-	return os.WriteFile(path, minifyHTML(buf.Bytes()), 0644)
+	if err := os.WriteFile(path, minifyHTML(buf.Bytes()), 0644); err != nil {
+		return err
+	}
+	return ctx.writeFragment(tmpl, path, data)
+}
+
+func (ctx *buildContext) writeFragment(tmpl *template.Template, path string, data map[string]interface{}) error {
+	var buf bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&buf, "content", data); err != nil {
+		return err
+	}
+	var title string
+	if v, ok := data["Title"]; ok {
+		title = fmt.Sprint(v)
+	}
+	frag := "<title>" + template.HTMLEscapeString(title) + "</title><main>" + string(minifyHTML(buf.Bytes())) + "</main>"
+	return os.WriteFile(strings.TrimSuffix(path, ".html")+".frag.html", []byte(frag), 0644)
 }
 
 func copyDir(src, dst string) error {
