@@ -79,15 +79,18 @@
     margin-bottom: 15px;
 }
 
+.post-body strong {
+    color: var(--primary-color);
+}
+
 .post-body a {
     color: var(--primary-color);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s;
+    text-decoration: underline;
+    transition: color 0.15s;
 }
 
 .post-body a:hover {
-    border-bottom-color: var(--primary-color);
+    color: color-mix(in srgb, var(--primary-color) 85%, white);
 }
 
 .post-body img {

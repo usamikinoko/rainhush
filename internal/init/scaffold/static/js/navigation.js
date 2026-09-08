@@ -58,27 +58,39 @@
     return true;
   }
 
+  var exitDuration = 180;
+
   function visit(url, replace) {
     var id = ++requestID;
     if (activeController) activeController.abort();
     activeController = new AbortController();
     var controller = activeController;
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var start = performance.now();
     var main = document.querySelector("main");
-    if (main) main.setAttribute("aria-busy", "true");
+    if (main) {
+      main.setAttribute("aria-busy", "true");
+      if (!reduced) main.classList.add("page-leaving");
+    }
 
     fetchPage(url, controller.signal).then(function (html) {
       if (id !== requestID) return;
-      prefetches.delete(pageKey(url));
-      var doc = new DOMParser().parseFromString(html, "text/html");
-      if (!updatePage(doc)) throw new Error("invalid page");
-      if (replace) history.replaceState(null, "", url.href);
-      else history.pushState(null, "", url.href);
-      if (url.hash) {
-        var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
-        if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
-      } else {
-        window.scrollTo(0, 0);
-      }
+      var wait = reduced ? 0 : Math.max(0, exitDuration - (performance.now() - start));
+      return new Promise(function (resolve) {
+        setTimeout(resolve, wait);
+      }).then(function () {
+        prefetches.delete(pageKey(url));
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        if (!updatePage(doc)) throw new Error("invalid page");
+        if (replace) history.replaceState(null, "", url.href);
+        else history.pushState(null, "", url.href);
+        if (url.hash) {
+          var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+          if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
+        } else {
+          window.scrollTo(0, 0);
+        }
+      });
     }).catch(function (error) {
       if (id !== requestID || error.name === "AbortError") return;
       location.href = url.href;
