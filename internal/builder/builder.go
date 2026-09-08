@@ -681,7 +681,7 @@ func computeHeatmap(posts []*Post) (cells []heatmapCell, dayLabels []string, mon
 			date := day.Format("2006-01-02")
 			c := counts[date]
 			cell := heatmapCell{
-				Date:  day.Format("Jan 2, 2006"),
+				Date:  day.Format("2006-01-02"),
 				Count: c,
 			}
 			switch {
@@ -831,7 +831,7 @@ func (ctx *buildContext) writeFragment(tmpl *template.Template, path string, dat
 	if v, ok := data["Title"]; ok {
 		title = fmt.Sprint(v)
 	}
-	frag := "<title>" + template.HTMLEscapeString(title) + "</title><main>" + string(minifyHTML(buf.Bytes())) + "</main>"
+	frag := "<title>" + template.HTMLEscapeString(title) + "</title><meta name=\"robots\" content=\"noindex\"><main>" + string(minifyHTML(buf.Bytes())) + "</main>"
 	return os.WriteFile(strings.TrimSuffix(path, ".html")+".frag.html", []byte(frag), 0644)
 }
 

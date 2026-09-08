@@ -2,6 +2,7 @@
   var requestID = 0;
   var activeController = null;
   var prefetches = new Map();
+  var parsedDocs = new Map();
 
   function isNavigable(link, event) {
     if (!link || (link.target && link.target !== "_self") || link.hasAttribute("download")) return false;
@@ -52,7 +53,10 @@
     });
     prefetches.set(key, request);
     request.catch(function () { prefetches.delete(key); });
-    window.setTimeout(function () { prefetches.delete(key); }, 10000);
+    window.setTimeout(function () {
+      prefetches.delete(key);
+      parsedDocs.delete(key);
+    }, 10000);
     return request;
   }
 
@@ -89,6 +93,7 @@
     var frag = fragmentURL(url);
     var main = document.querySelector("main");
     if (main) main.setAttribute("aria-busy", "true");
+    if (!url.hash) window.scrollTo(0, 0);
     var exitStart = null;
     if (!reduced && main && prefetches.has(pageKey(frag))) {
       exitStart = performance.now();
@@ -105,16 +110,19 @@
       return new Promise(function (resolve) {
         setTimeout(resolve, wait);
       }).then(function () {
-        prefetches.delete(pageKey(frag));
-        var doc = new DOMParser().parseFromString(html, "text/html");
+        var key = pageKey(frag);
+        prefetches.delete(key);
+        var doc = parsedDocs.get(key);
+        if (!doc) {
+          doc = new DOMParser().parseFromString(html, "text/html");
+          parsedDocs.set(key, doc);
+        }
         if (!updatePage(doc)) throw new Error("invalid page");
         if (replace) history.replaceState(null, "", url.href);
         else history.pushState(null, "", url.href);
         if (url.hash) {
           var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
           if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
-        } else {
-          window.scrollTo(0, 0);
         }
       });
     }).catch(function (error) {
@@ -133,6 +141,12 @@
     if (!isNavigable(link)) return;
     fetchPage(new URL(link.href, location.href)).catch(function () {});
   });
+
+  document.addEventListener("touchstart", function (event) {
+    var link = event.target.closest && event.target.closest("a");
+    if (!isNavigable(link)) return;
+    fetchPage(new URL(link.href, location.href)).catch(function () {});
+  }, { passive: true });
 
   document.addEventListener("focusin", function (event) {
     var link = event.target.closest && event.target.closest("a");

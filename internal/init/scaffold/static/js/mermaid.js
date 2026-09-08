@@ -1,9 +1,20 @@
 (function () {
   var initialized = false;
   var loading = false;
+  var observer = null;
+
+  function schedule(fn) {
+    if (window.requestIdleCallback) window.requestIdleCallback(fn, { timeout: 300 });
+    else setTimeout(fn, 200);
+  }
+
+  function renderNode(node) {
+    mermaid.run({ nodes: [node] }).catch(function () {});
+  }
 
   function run() {
-    if (!document.querySelector("pre.mermaid")) return;
+    var nodes = document.querySelectorAll("pre.mermaid");
+    if (!nodes.length) return;
     if (typeof mermaid === "undefined") {
       if (loading) return;
       loading = true;
@@ -23,7 +34,25 @@
       });
       initialized = true;
     }
-    mermaid.run({ querySelector: "pre.mermaid" });
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    if (!window.IntersectionObserver) {
+      schedule(function () {
+        for (var i = 0; i < nodes.length; i++) renderNode(nodes[i]);
+      });
+      return;
+    }
+    observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (!entries[i].isIntersecting) continue;
+        var node = entries[i].target;
+        observer.unobserve(node);
+        renderNode(node);
+      }
+    }, { rootMargin: "300px 0px" });
+    for (var j = 0; j < nodes.length; j++) observer.observe(nodes[j]);
   }
 
   window.initMermaidDiagrams = run;

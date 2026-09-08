@@ -13,7 +13,7 @@
                 {{range .HeatmapDayLabels}}<span class="heatmap-label">{{.}}</span>{{end}}
             </div>
             <div class="heatmap-weeks">
-                {{range .HeatmapCells}}<span class="heatmap-cell heatmap-l{{.Level}}" tabindex="0"><span class="heatmap-tooltip">{{if eq .Count 0}}No updates on {{.Date}}{{else}}{{.Count}} update{{if ne .Count 1}}s{{end}} on {{.Date}}{{end}}</span></span>{{end}}
+                {{range .HeatmapCells}}<span class="heatmap-cell heatmap-l{{.Level}}" tabindex="0"><span class="heatmap-tooltip"><span class="heatmap-tooltip-date">{{.Date}}</span><span class="heatmap-tooltip-count">{{if eq .Count 0}}No updates{{else}}{{.Count}} update{{if ne .Count 1}}s{{end}}{{end}}</span></span></span>{{end}}
             </div>
         </div>
     </div>

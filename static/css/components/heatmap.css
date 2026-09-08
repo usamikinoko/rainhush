@@ -112,6 +112,7 @@
     left: 50%;
     bottom: calc(100% + 8px);
     transform: translateX(-50%) translateY(4px);
+    width: max-content;
     padding: 8px 10px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -119,6 +120,7 @@
     color: var(--text-color);
     font-size: 0.78em;
     line-height: 1.4;
+    text-align: center;
     max-width: min(240px, calc(100vw - 24px));
     white-space: normal;
     overflow-wrap: anywhere;
@@ -148,6 +150,18 @@
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
+}
+
+.heatmap-tooltip-date {
+    display: block;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2px;
+}
+
+.heatmap-tooltip-count {
+    display: block;
+    color: var(--text-muted);
 }
 
 /* ---- Legend ---- */
