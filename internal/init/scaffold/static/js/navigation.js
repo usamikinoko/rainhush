@@ -4,7 +4,7 @@
   var prefetches = new Map();
   var parsedDocs = new Map();
   var prefetchReady = new Set();
-  var prefetchAborters = new Set();
+  var prefetchAborters = new Map();
   var fetchTimeout = 8000;
   var exitDuration = 180;
 
@@ -57,11 +57,11 @@
     if (signal) {
       signal.addEventListener("abort", function () { controller.abort(); });
     } else {
-      prefetchAborters.add(controller);
+      prefetchAborters.set(key, controller);
     }
     var timer = window.setTimeout(function () {
       timedOut = true;
-      prefetchAborters.delete(controller);
+      prefetchAborters.delete(key);
       controller.abort();
     }, fetchTimeout);
 
@@ -83,12 +83,12 @@
       return response.text();
     }).then(function (text) {
       window.clearTimeout(timer);
-      prefetchAborters.delete(controller);
+      prefetchAborters.delete(key);
       prefetchReady.add(key);
       return text;
     }, function (error) {
       window.clearTimeout(timer);
-      prefetchAborters.delete(controller);
+      prefetchAborters.delete(key);
       if (timedOut) throw new Error("navigation timeout");
       throw error;
     });
@@ -133,8 +133,13 @@
     if (activeController) activeController.abort();
     activeController = new AbortController();
     var controller = activeController;
-    prefetchAborters.forEach(function (c) { c.abort(); });
-    prefetchAborters.clear();
+    var frag = fragmentURL(url);
+    var key = pageKey(frag);
+    prefetchAborters.forEach(function (c, k) {
+      if (k === key) return;
+      c.abort();
+      prefetchAborters.delete(k);
+    });
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var frag = fragmentURL(url);
     var key = pageKey(frag);
