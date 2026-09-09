@@ -141,23 +141,17 @@
       prefetchAborters.delete(k);
     });
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var frag = fragmentURL(url);
-    var key = pageKey(frag);
     var main = document.querySelector("main");
     if (main) main.setAttribute("aria-busy", "true");
     if (!url.hash) window.scrollTo(0, 0);
     var exitStart = null;
-    if (!reduced && main && (prefetchReady.has(key) || parsedDocs.has(key))) {
+    if (!reduced && main) {
       exitStart = performance.now();
       main.classList.add("page-leaving");
     }
 
     fetchPage(url, controller.signal).then(function (html) {
       if (id !== requestID) return;
-      if (exitStart === null && !reduced && main) {
-        exitStart = performance.now();
-        main.classList.add("page-leaving");
-      }
       var wait = reduced || exitStart === null ? 0 : Math.max(0, exitDuration - (performance.now() - exitStart));
       return new Promise(function (resolve) {
         setTimeout(resolve, wait);
