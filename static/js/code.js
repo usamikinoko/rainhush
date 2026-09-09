@@ -1,4 +1,6 @@
 function copyCode(btn) {
+    if (btn.dataset.locked) return;
+    btn.dataset.locked = '1';
     var code = btn.closest('.code-block').querySelector('code').textContent;
     var textSpan = btn.querySelector('.copy-text');
     var finish = function (ok) {
@@ -7,6 +9,7 @@ function copyCode(btn) {
         setTimeout(function () {
             textSpan.textContent = 'Copy';
             btn.classList.remove('copied');
+            delete btn.dataset.locked;
         }, ok ? 2000 : 1500);
     };
     var fallback = function () {

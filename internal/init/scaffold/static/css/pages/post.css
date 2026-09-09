@@ -314,3 +314,22 @@
         min-width: 140px;
     }
 }
+
+.post-license {
+    margin-top: 44px;
+    margin-bottom: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--primary-color);
+}
+
+.post-license-text {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    line-height: 1.9;
+}
+
+.post-license-text a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}

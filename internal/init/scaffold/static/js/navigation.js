@@ -3,6 +3,10 @@
   var activeController = null;
   var prefetches = new Map();
   var parsedDocs = new Map();
+  var prefetchReady = new Set();
+  var prefetchAborters = new Set();
+  var fetchTimeout = 8000;
+  var exitDuration = 180;
 
   function isNavigable(link, event) {
     if (!link || (link.target && link.target !== "_self") || link.hasAttribute("download")) return false;
@@ -30,18 +34,45 @@
     return frag;
   }
 
+  function syncNavActive() {
+    var path = location.pathname;
+    var active = "Home";
+    if (path.indexOf("/articles") === 0) active = "Articles";
+    else if (path.indexOf("/friends") === 0) active = "Friends";
+    else if (path.indexOf("/about") === 0) active = "About";
+    var links = document.querySelectorAll(".header-nav > a");
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.toggle("active", links[i].textContent.trim() === active);
+    }
+  }
+
   function fetchPage(url, signal) {
     var frag = fragmentURL(url);
     var key = pageKey(frag);
     if (prefetches.has(key)) return prefetches.get(key);
+    if (parsedDocs.has(key)) return Promise.resolve("");
+
+    var controller = new AbortController();
+    var timedOut = false;
+    if (signal) {
+      signal.addEventListener("abort", function () { controller.abort(); });
+    } else {
+      prefetchAborters.add(controller);
+    }
+    var timer = window.setTimeout(function () {
+      timedOut = true;
+      prefetchAborters.delete(controller);
+      controller.abort();
+    }, fetchTimeout);
+
     var request = fetch(frag, {
       credentials: "same-origin",
-      signal: signal,
+      signal: controller.signal,
       headers: { Accept: "text/html" },
     }).then(function (response) {
       if (!response.ok) return fetch(url, {
         credentials: "same-origin",
-        signal: signal,
+        signal: controller.signal,
         headers: { Accept: "text/html" },
       });
       return response;
@@ -50,12 +81,24 @@
       var type = response.headers.get("content-type") || "";
       if (type && type.indexOf("text/html") === -1) throw new Error("navigation returned non-HTML");
       return response.text();
+    }).then(function (text) {
+      window.clearTimeout(timer);
+      prefetchAborters.delete(controller);
+      prefetchReady.add(key);
+      return text;
+    }, function (error) {
+      window.clearTimeout(timer);
+      prefetchAborters.delete(controller);
+      if (timedOut) throw new Error("navigation timeout");
+      throw error;
     });
+
     prefetches.set(key, request);
     request.catch(function () { prefetches.delete(key); });
     window.setTimeout(function () {
       prefetches.delete(key);
       parsedDocs.delete(key);
+      prefetchReady.delete(key);
     }, 10000);
     return request;
   }
@@ -79,23 +122,27 @@
     if (window.syncThemeButton) {
       window.syncThemeButton(document.documentElement.getAttribute("data-theme") || "dark");
     }
+    if (window.syncRainButton) {
+      window.syncRainButton();
+    }
     return true;
   }
-
-  var exitDuration = 180;
 
   function visit(url, replace) {
     var id = ++requestID;
     if (activeController) activeController.abort();
     activeController = new AbortController();
     var controller = activeController;
+    prefetchAborters.forEach(function (c) { c.abort(); });
+    prefetchAborters.clear();
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var frag = fragmentURL(url);
+    var key = pageKey(frag);
     var main = document.querySelector("main");
     if (main) main.setAttribute("aria-busy", "true");
     if (!url.hash) window.scrollTo(0, 0);
     var exitStart = null;
-    if (!reduced && main && prefetches.has(pageKey(frag))) {
+    if (!reduced && main && (prefetchReady.has(key) || parsedDocs.has(key))) {
       exitStart = performance.now();
       main.classList.add("page-leaving");
     }
@@ -110,8 +157,8 @@
       return new Promise(function (resolve) {
         setTimeout(resolve, wait);
       }).then(function () {
-        var key = pageKey(frag);
         prefetches.delete(key);
+        prefetchReady.delete(key);
         var doc = parsedDocs.get(key);
         if (!doc) {
           doc = new DOMParser().parseFromString(html, "text/html");
@@ -120,6 +167,7 @@
         if (!updatePage(doc)) throw new Error("invalid page");
         if (replace) history.replaceState(null, "", url.href);
         else history.pushState(null, "", url.href);
+        syncNavActive();
         if (url.hash) {
           var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
           if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
@@ -164,4 +212,6 @@
   window.addEventListener("popstate", function () {
     visit(new URL(location.href), true);
   });
+
+  syncNavActive();
 })();

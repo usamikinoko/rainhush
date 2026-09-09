@@ -8,6 +8,9 @@
   var ch = 0;
   var frameId = 0;
   var color = "";
+  var raining = localStorage.getItem("rain") !== "0";
+  var draining = false;
+  var rainLocked = false;
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var saveData = navigator.connection && navigator.connection.saveData;
   var WIND = 0;
@@ -77,6 +80,7 @@
     if (!color) color = getColor();
     ctx.clearRect(0, 0, cw, ch);
 
+    var alive = [];
     for (var i = 0; i < drops.length; i++) {
       var d = drops[i];
       var dx = d.speed * WIND;
@@ -93,9 +97,12 @@
       d.y += d.speed;
 
       if (d.y > ch + d.length || d.x < -20 || d.x > cw + 20) {
+        if (draining) continue;
         resetDrop(d);
       }
+      alive.push(d);
     }
+    drops = alive;
   }
 
   function rebuildDrops() {
@@ -109,6 +116,7 @@
   function loop() {
     frameId = 0;
     if (!shouldAnimate()) {
+      draining = false;
       ctx.clearRect(0, 0, cw, ch);
       return;
     }
@@ -116,6 +124,11 @@
       rebuildDrops();
     }
     draw();
+    if (draining && drops.length === 0) {
+      draining = false;
+      ctx.clearRect(0, 0, cw, ch);
+      return;
+    }
     schedule();
   }
 
@@ -135,7 +148,7 @@
 
   function sync() {
     setVisibility();
-    if (shouldAnimate()) {
+    if (raining && shouldAnimate()) {
       init();
       schedule();
       return;
@@ -145,8 +158,35 @@
       cancelAnimationFrame(frameId);
       frameId = 0;
     }
+    draining = false;
     ctx.clearRect(0, 0, cw, ch);
   }
+
+  window.rainEnabled = function () {
+    return raining;
+  };
+
+  window.toggleRain = function () {
+    if (rainLocked) return;
+    rainLocked = true;
+    window.setTimeout(function () { rainLocked = false; }, 350);
+    if (raining) {
+      raining = false;
+      draining = true;
+      if (!frameId && shouldAnimate()) {
+        schedule();
+      }
+    } else {
+      raining = true;
+      draining = false;
+      if (shouldAnimate()) {
+        init();
+        schedule();
+      }
+    }
+    localStorage.setItem("rain", raining ? "1" : "0");
+    if (window.syncRainButton) window.syncRainButton();
+  };
 
   window.addEventListener("resize", sync);
   document.addEventListener("visibilitychange", sync);

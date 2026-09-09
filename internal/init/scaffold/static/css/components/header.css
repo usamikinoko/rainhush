@@ -153,6 +153,49 @@
     display: block;
 }
 
+.rain-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition:
+        background 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+}
+
+.rain-toggle:hover {
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+.rain-toggle-icon {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: opacity 0.15s;
+}
+
+.rain-toggle[aria-pressed="true"] .icon-rain-off {
+    display: none;
+}
+
+.rain-toggle[aria-pressed="false"] .icon-rain-on {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .header-menu-btn {
         display: flex;

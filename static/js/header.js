@@ -17,7 +17,12 @@
         parts.nav.classList.toggle('open', open);
     }
 
+    var menuLocked = false;
+
     window.toggleMenu = function toggleMenu() {
+        if (menuLocked) return;
+        menuLocked = true;
+        window.setTimeout(function () { menuLocked = false; }, 300);
         var parts = getMenuElements();
         if (!parts.button) {
             return;

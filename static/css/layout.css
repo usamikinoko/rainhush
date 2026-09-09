@@ -211,6 +211,11 @@ main.page-leaving {
     }
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.35s;
+}
+
 @media (max-width: 480px) {
     .footer-inner {
         flex-direction: column;
