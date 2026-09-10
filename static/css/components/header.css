@@ -43,7 +43,7 @@
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.95em;
-    padding-bottom: 4px;
+    padding: 0;
     border-bottom: 2px solid transparent;
     transition:
         color 0.15s,

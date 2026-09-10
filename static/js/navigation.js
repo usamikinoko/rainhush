@@ -36,13 +36,11 @@
 
   function syncNavActive() {
     var path = location.pathname;
-    var active = "Home";
-    if (path.indexOf("/articles") === 0) active = "Articles";
-    else if (path.indexOf("/friends") === 0) active = "Friends";
-    else if (path.indexOf("/about") === 0) active = "About";
     var links = document.querySelectorAll(".header-nav > a");
     for (var i = 0; i < links.length; i++) {
-      links[i].classList.toggle("active", links[i].textContent.trim() === active);
+      var href = links[i].getAttribute("href");
+      var on = href === "/index.html" ? path === "/" || path === "/index.html" : path.indexOf(href.replace(".html", "")) === 0;
+      links[i].classList.toggle("active", on);
     }
   }
 

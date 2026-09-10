@@ -715,11 +715,11 @@ func computeHeatmap(posts []*Post) (cells []heatmapCell, dayLabels []string, mon
 		}
 	}
 
-	dayLabels = []string{"", "一", "", "三", "", "五", ""}
+	dayLabels = []string{"", "Mon", "", "Wed", "", "Fri", ""}
 
 	for w := 0; w < 53; w++ {
 		d := start.AddDate(0, 0, w*7)
-		m := strconv.Itoa(int(d.Month())) + "月"
+		m := d.Format("Jan")
 		if len(months) == 0 || months[len(months)-1].Label != m {
 			months = append(months, heatmapMonth{
 				Label: m,
