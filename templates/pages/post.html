@@ -4,13 +4,14 @@
 <article class="post">
     <h1>{{.Title}}</h1>
     <div class="post-meta-top">
-        {{if .Avatar}}<img class="post-author-avatar" src="{{.Avatar}}" alt="{{.Author}}" loading="lazy">{{end}}
+        {{/* {{if .Avatar}}<img class="post-author-avatar" src="{{.Avatar}}" alt="{{.Author}}" loading="lazy">{{end}} */}}
         <div class="post-meta-row">
             {{if .Author}}<span class="post-author">{{.Author}}</span>{{end}}
-            {{if .Date}}{{if .Author}}<span class="post-meta-sep">·</span>{{end}}<time class="post-date" datetime="{{.Date}}">Published on {{.Date}}</time>{{end}}
-            {{if .UpdatedAt}}{{if or .Author .Date}}<span class="post-meta-sep">·</span>{{end}}<span class="post-updated">Updated at {{.UpdatedAt}}</span>{{end}}
+            {{if .Date}}{{if .Author}}<span class="post-meta-sep">·</span>{{end}}<time class="post-date" datetime="{{.Date}}">发布于 {{.Date}}</time>{{end}}
+            {{if .UpdatedAt}}{{if or .Author .Date}}<span class="post-meta-sep">·</span>{{end}}<span class="post-updated">更新于 {{.UpdatedAt}}</span>{{end}}
             {{if .Location}}{{if or .Author .Date .UpdatedAt}}<span class="post-meta-sep">·</span>{{end}}<span class="post-location">{{.Location}}</span>{{end}}
         </div>
+        <div class="post-meta-row post-meta-stats">本篇文章共 {{.WordCount}} 字，预计阅读 {{.ReadingMinutes}} 分钟</div>
     </div>
     {{if .Cover}}<img class="post-cover" src="{{.Cover}}" alt="{{.Title}}" loading="lazy" decoding="async">{{end}}
     <div class="post-body">

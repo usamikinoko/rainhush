@@ -12,6 +12,10 @@ home:
   avatar: https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim
   owner: Hypokinoko
 
+# Words read per minute used to estimate post reading time.
+reading:
+  words_per_minute: 300
+
 deep:
   enabled: true
   password: change-me

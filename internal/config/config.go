@@ -25,6 +25,10 @@ type HomeConfig struct {
 	Owner    string `yaml:"owner"`
 }
 
+type ReadingConfig struct {
+	WordsPerMinute int `yaml:"words_per_minute"`
+}
+
 type DeployServerConfig struct {
 	Host       string `yaml:"host"`
 	User       string `yaml:"user"`
@@ -52,6 +56,7 @@ type Config struct {
 	Server     ServerConfig    `yaml:"server"`
 	Site       SiteConfig      `yaml:"site"`
 	Home       HomeConfig      `yaml:"home"`
+	Reading    ReadingConfig   `yaml:"reading"`
 	Deep       DeepConfig      `yaml:"deep"`
 	Deploy     DeployConfig    `yaml:"deploy"`
 	Extensions map[string]bool `yaml:"extensions"`
@@ -92,6 +97,9 @@ func Load() error {
 	if Cfg.Server.Port == 0 {
 		Cfg.Server.Port = 8080
 	}
+	if Cfg.Reading.WordsPerMinute == 0 {
+		Cfg.Reading.WordsPerMinute = 300
+	}
 	if Cfg.Deploy.Mode == "" {
 		Cfg.Deploy.Mode = "git"
 	} else if Cfg.Deploy.Mode != "git" && Cfg.Deploy.Mode != "server" {
@@ -110,8 +118,6 @@ func Load() error {
 	return nil
 }
 
-// ExtensionEnabled reports whether an extension participates in the build.
-// An omitted entry is enabled for backwards compatibility; only false disables it.
 func ExtensionEnabled(name string) bool {
 	if Cfg == nil || Cfg.Extensions == nil {
 		return true

@@ -42,11 +42,12 @@ type Frontmatter struct {
 
 type Post struct {
 	Frontmatter
-	Content     template.HTML
-	Filename    string
-	Excerpt     string
-	PublishedAt time.Time
-	WordCount   int
+	Content        template.HTML
+	Filename       string
+	Excerpt        string
+	PublishedAt    time.Time
+	WordCount      int
+	ReadingMinutes int
 }
 
 type navMap map[string]string
@@ -338,13 +339,15 @@ func parsePost(path string) (*Post, error) {
 	}
 
 	filename := strings.TrimSuffix(filepath.Base(path), ".md")
+	wc := wordCount(body)
 	return &Post{
-		Frontmatter: *fm,
-		Content:     template.HTML(rendered.html),
-		Filename:    filename,
-		Excerpt:     extractExcerpt(body),
-		PublishedAt: publishedAt,
-		WordCount:   wordCount(body),
+		Frontmatter:    *fm,
+		Content:        template.HTML(rendered.html),
+		Filename:       filename,
+		Excerpt:        extractExcerpt(body),
+		PublishedAt:    publishedAt,
+		WordCount:      wc,
+		ReadingMinutes: readingMinutes(wc),
 	}, nil
 }
 
@@ -356,6 +359,18 @@ func wordCount(body string) int {
 		}
 	}
 	return n
+}
+
+func readingMinutes(words int) int {
+	speed := config.Cfg.Reading.WordsPerMinute
+	if speed < 1 {
+		speed = 300
+	}
+	minutes := (words + speed - 1) / speed
+	if minutes < 1 {
+		return 1
+	}
+	return minutes
 }
 
 func formatWords(n int) string {
@@ -436,16 +451,18 @@ func (ctx *buildContext) renderPost(tmpl *template.Template, post *Post) error {
 
 	canonicalURL := strings.TrimRight(config.Cfg.Site.URL, "/") + "/articles/" + post.Filename + "/"
 	return ctx.writeHTML(tmpl, filepath.Join(dir, "index.html"), ctx.pageData(map[string]interface{}{
-		"CanonicalURL": canonicalURL,
-		"Title":        post.Title,
-		"Author":       post.Author,
-		"Date":         post.Date,
-		"UpdatedAt":    post.UpdatedAt,
-		"Location":     post.Location,
-		"Avatar":       post.Avatar,
-		"Cover":        post.Cover,
-		"Content":      post.Content,
-		"Nav":          navArticles,
+		"CanonicalURL":   canonicalURL,
+		"Title":          post.Title,
+		"Author":         post.Author,
+		"Date":           post.Date,
+		"UpdatedAt":      post.UpdatedAt,
+		"Location":       post.Location,
+		"Avatar":         post.Avatar,
+		"Cover":          post.Cover,
+		"Content":        post.Content,
+		"WordCount":      post.WordCount,
+		"ReadingMinutes": post.ReadingMinutes,
+		"Nav":            navArticles,
 	}))
 }
 
@@ -698,11 +715,11 @@ func computeHeatmap(posts []*Post) (cells []heatmapCell, dayLabels []string, mon
 		}
 	}
 
-	dayLabels = []string{"", "Mon", "", "Wed", "", "Fri", ""}
+	dayLabels = []string{"", "一", "", "三", "", "五", ""}
 
 	for w := 0; w < 53; w++ {
 		d := start.AddDate(0, 0, w*7)
-		m := d.Format("Jan")
+		m := strconv.Itoa(int(d.Month())) + "月"
 		if len(months) == 0 || months[len(months)-1].Label != m {
 			months = append(months, heatmapMonth{
 				Label: m,

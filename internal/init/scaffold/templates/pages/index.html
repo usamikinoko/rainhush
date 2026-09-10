@@ -42,7 +42,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .TechPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .TechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Lite Tech</h2>
@@ -60,7 +60,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .LiteTechPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .LiteTechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Life</h2>
@@ -78,7 +78,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .LifePosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .LifePosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Others</h2>
@@ -96,14 +96,14 @@
                 </div>
             </article>
             {{end}}
-            {{if not .OthersPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .OthersPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
     </div>
     <div class="home-readmore">
         <a href="/articles.html">More Articles</a>
     </div>
     {{else}}
-    <p>No posts yet. Create .md files in the content/posts/ directory.</p>
+    <p>还未收录文章 Create .md files in the content/posts/ directory.</p>
     {{end}} {{template "heatmap" .}}
 </div>
 {{end}}

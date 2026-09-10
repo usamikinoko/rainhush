@@ -14,11 +14,11 @@
         <div class="home-hero-stats">
             <div class="home-hero-stat">
                 <span class="home-hero-stat-num">{{.TotalPosts}}</span>
-                <span class="home-hero-stat-label">Articles</span>
+                <span class="home-hero-stat-label">篇</span>
             </div>
             <div class="home-hero-stat">
                 <span class="home-hero-stat-num">{{.TotalWords}}</span>
-                <span class="home-hero-stat-label">Words</span>
+                <span class="home-hero-stat-label">字</span>
             </div>
         </div>
         <p class="home-hero-owner">{{.Home.Owner}}</p>
@@ -42,7 +42,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .TechPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .TechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Lite Tech</h2>
@@ -60,7 +60,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .LiteTechPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .LiteTechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Trivia</h2>
@@ -78,7 +78,7 @@
                 </div>
             </article>
             {{end}}
-            {{if not .TriviaPosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .TriviaPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
         <section class="home-posts-col">
             <h2 class="home-posts-col-title">Life</h2>
@@ -96,14 +96,14 @@
                 </div>
             </article>
             {{end}}
-            {{if not .LifePosts}}<p class="home-posts-col-empty">No posts yet.</p>{{end}}
+            {{if not .LifePosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
         </section>
     </div>
     <div class="home-readmore">
-        <a href="/articles.html">More Articles</a>
+        <a href="/articles.html">更多文章</a>
     </div>
     {{else}}
-    <p>No posts yet. Create .md files in the content/posts/ directory.</p>
+    <p>还未收录文章，你可以创建 Markdown 文档并存放于 content/posts/ 目录下</p>
     {{end}} {{template "heatmap" .}}
 </div>
 {{end}}
