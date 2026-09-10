@@ -168,6 +168,9 @@ func Build() error {
 	if err := ctx.renderFriends(); err != nil {
 		return err
 	}
+	if err := ctx.renderLogs(); err != nil {
+		return err
+	}
 	if err := ctx.renderDeep(); err != nil {
 		return err
 	}
@@ -499,7 +502,7 @@ func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) err
 	cells, dl, ml, ht := computeHeatmap(posts)
 
 	return ctx.writeHTML(tmpl, filepath.Join("public", "index.html"), ctx.pageData(map[string]interface{}{
-		"Title": "Home",
+		"Title": "首页",
 		"Home": map[string]string{
 			"Title":  config.Cfg.Home.Title,
 			"Avatar": config.Cfg.Home.Avatar,
@@ -567,7 +570,7 @@ func (ctx *buildContext) renderArticles(tmpl *template.Template, posts []*Post) 
 		}
 
 		if err := ctx.writeHTML(tmpl, outPath, ctx.pageData(map[string]interface{}{
-			"Title":        "Articles",
+			"Title":        "文章",
 			"Posts":        posts[start:end],
 			"Page":         page,
 			"TotalPages":   totalPages,
@@ -641,6 +644,29 @@ func (ctx *buildContext) renderFriends() error {
 		"Title":        fm.Title,
 		"Content":      template.HTML(rendered.html),
 		"Nav":          navFriends,
+	}))
+}
+
+func (ctx *buildContext) renderLogs() error {
+	fm, rendered, err := renderMarkdownPage("content/logs/logs.md", "Logs")
+	if err != nil {
+		return err
+	}
+
+	tmpl, err := ctx.cloneTmpl()
+	if err != nil {
+		return err
+	}
+	if _, err := tmpl.ParseFiles("templates/pages/about.html"); err != nil {
+		return err
+	}
+
+	canonicalURL := strings.TrimRight(config.Cfg.Site.URL, "/") + "/logs.html"
+	return ctx.writeHTML(tmpl, filepath.Join("public", "logs.html"), ctx.pageData(map[string]interface{}{
+		"CanonicalURL": canonicalURL,
+		"Title":        fm.Title,
+		"Content":      template.HTML(rendered.html),
+		"Nav":          navState(""),
 	}))
 }
 
@@ -848,7 +874,7 @@ func (ctx *buildContext) writeFragment(tmpl *template.Template, path string, dat
 	if v, ok := data["Title"]; ok {
 		title = fmt.Sprint(v)
 	}
-	frag := "<title>" + template.HTMLEscapeString(title) + "</title><meta name=\"robots\" content=\"noindex\"><main>" + string(minifyHTML(buf.Bytes())) + "</main>"
+	frag := "<title>" + template.HTMLEscapeString(title) + " | " + template.HTMLEscapeString(siteTitle()) + "</title><meta name=\"robots\" content=\"noindex\"><main>" + string(minifyHTML(buf.Bytes())) + "</main>"
 	return os.WriteFile(strings.TrimSuffix(path, ".html")+".frag.html", []byte(frag), 0644)
 }
 
