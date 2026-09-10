@@ -34,6 +34,7 @@
 }
 
 .home-hero-stat-num {
+    font-size: 0.9em;
     color: var(--primary-color);
 }
 
