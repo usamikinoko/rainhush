@@ -3,7 +3,7 @@ server:
 
 site:
   url: https://kinoko.fun
-  description: Rainhush - Hypokinoko（阿菇）的个人博客，分享技术开发与生活记录
+  description: Rainhush - Hypokinoko（阿菇）的个人博客，基于 RainHush 静态站点生成器构建，分享技术开发与生活记录
   favicon: https://img.kinoko.fun/fake-mirror/ruriloongloong.jpg?imageSlim
 
 home:

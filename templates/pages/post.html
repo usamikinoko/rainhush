@@ -17,6 +17,24 @@
     <div class="post-body">
         {{.Content}}
     </div>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "{{.Title}}",
+        "datePublished": "{{.Date}}",
+        "dateModified": "{{if .UpdatedAt}}{{.UpdatedAt}}{{else}}{{.Date}}{{end}}",
+        "author": {
+            "@type": "Person",
+            "name": "{{if .Author}}{{.Author}}{{else}}Hypokinoko{{end}}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "{{.SiteName}}"
+        },
+        "mainEntityOfPage": "{{.CanonicalURL}}"
+    }
+    </script>
     <div class="post-license">
         <p class="post-license-text">
             本文采用知识共享署名-非商业性使用 4.0 国际许可协议，简称 <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a> 授权。<br />

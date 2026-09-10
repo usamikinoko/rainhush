@@ -502,7 +502,7 @@ func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) err
 	cells, dl, ml, ht := computeHeatmap(posts)
 
 	return ctx.writeHTML(tmpl, filepath.Join("public", "index.html"), ctx.pageData(map[string]interface{}{
-		"Title": "首页",
+		"Title": "个人博客",
 		"Home": map[string]string{
 			"Title":  config.Cfg.Home.Title,
 			"Avatar": config.Cfg.Home.Avatar,
@@ -598,29 +598,30 @@ func (ctx *buildContext) renderAbout() error {
 		return err
 	}
 
-	for _, p := range []struct{ out, src, lang string }{
-		{"about.html", "content/about/about_CN.md", "zh-CN"},
-		{"about_EN.html", "content/about/about_EN.md", "en"},
+	for _, p := range []struct{ out, src, lang, alt string }{
+		{"about.html", "content/about/about_CN.md", "zh-CN", "about_EN.html"},
+		{"about_EN.html", "content/about/about_EN.md", "en", "about.html"},
 	} {
-		if err := ctx.renderAboutPage(tmpl, p.out, p.src, p.lang); err != nil {
+		if err := ctx.renderAboutPage(tmpl, p.out, p.src, p.lang, p.alt); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (ctx *buildContext) renderAboutPage(tmpl *template.Template, out, src, lang string) error {
+func (ctx *buildContext) renderAboutPage(tmpl *template.Template, out, src, lang, alt string) error {
 	fm, rendered, err := renderMarkdownPage(src, "About")
 	if err != nil {
 		return err
 	}
-	canonicalURL := strings.TrimRight(config.Cfg.Site.URL, "/") + "/" + out
+	base := strings.TrimRight(config.Cfg.Site.URL, "/")
 	return ctx.writeHTML(tmpl, filepath.Join("public", out), ctx.pageData(map[string]interface{}{
-		"CanonicalURL": canonicalURL,
+		"CanonicalURL": base + "/" + out,
 		"Title":        fm.Title,
 		"Content":      template.HTML(rendered.html),
 		"Nav":          navAbout,
 		"Lang":         lang,
+		"LangAlt":      base + "/" + alt,
 	}))
 }
 
@@ -782,6 +783,7 @@ func renderSitemap(posts []*Post) error {
 	add("/friends.html", "", "0.6")
 	add("/about.html", "", "0.6")
 	add("/about_EN.html", "", "0.6")
+	add("/logs.html", "", "0.5")
 
 	totalPages := max(int(math.Ceil(float64(len(posts))/float64(articlesPerPage))), 1)
 	for page := 2; page <= totalPages; page++ {

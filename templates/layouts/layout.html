@@ -12,18 +12,16 @@
         <meta name="author" content="Hypokinoko" />
         {{if .CanonicalURL}}<link rel="canonical" href="{{.CanonicalURL}}" />{{else}}<link rel="canonical" href="https://kinoko.fun/" />{{end}}
         <link rel="alternate" type="application/rss+xml" title="{{.SiteName}}" href="/feed.xml" />
-        <link rel="alternate" hreflang="zh-CN" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
-        <link rel="alternate" hreflang="en" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
-        <link rel="alternate" hreflang="x-default" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />
+        {{if and .Lang .LangAlt}}<link rel="alternate" hreflang="{{.Lang}}" href="{{.CanonicalURL}}" /><link rel="alternate" hreflang="{{if eq .Lang "zh-CN"}}en{{else}}zh-CN{{end}}" href="{{.LangAlt}}" /><link rel="alternate" hreflang="x-default" href="{{if .Site.URL}}{{.Site.URL}}{{else}}https://kinoko.fun{{end}}/" />{{end}}
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="{{.SiteName}}" />
-        <meta property="og:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} - {{.SiteName}}{{else}}{{.SiteName}} - Hypokinoko{{end}}" />
+        <meta property="og:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} | {{.SiteName}}{{else}}{{.SiteName}} | Hypokinoko{{end}}" />
         <meta property="og:description" content="{{if .Site.Description}}{{.Site.Description}}{{else}}Hypokinoko（阿菇）的个人技术博客{{end}}" />
         {{if .CanonicalURL}}<meta property="og:url" content="{{.CanonicalURL}}" />{{else}}<meta property="og:url" content="https://kinoko.fun/" />{{end}}
         <meta property="og:locale" content="zh_CN" />
         <meta property="og:image" content="{{if .Site.Favicon}}{{.Site.Favicon}}{{else}}https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim{{end}}" />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} - {{.SiteName}}{{else}}{{.SiteName}}{{end}}" />
+        <meta name="twitter:title" content="{{if and .Title (ne .Title .SiteName)}}{{.Title}} | {{.SiteName}}{{else}}{{.SiteName}}{{end}}" />
         <meta name="twitter:description" content="{{if .Site.Description}}{{.Site.Description}}{{else}}Hypokinoko（阿菇）的个人技术博客{{end}}" />
         <meta name="twitter:image" content="{{if .Site.Favicon}}{{.Site.Favicon}}{{else}}https://img.kinoko.fun/fake-mirror/image-20260505193500896.png?imageSlim{{end}}" />
         <!-- Google Site Verification -->
