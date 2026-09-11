@@ -82,7 +82,10 @@
                         return;
                     } catch (e) {}
                 }
+                var root = document.documentElement;
+                root.classList.add("theme-anim");
                 apply();
+                window.setTimeout(function () { root.classList.remove("theme-anim"); }, 400);
             }
         </script>
         {{if .DeepJS}}<script src="{{.DeepJS}}" defer></script>{{end}}

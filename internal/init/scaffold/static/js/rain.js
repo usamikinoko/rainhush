@@ -48,6 +48,7 @@
   function setVisibility() {
     var show = window.innerWidth >= 768;
     canvas.style.display = show ? "block" : "none";
+    canvas.classList.toggle("rain-on", raining && show);
   }
 
   function createDrop(x) {
@@ -185,6 +186,7 @@
       }
     }
     localStorage.setItem("rain", raining ? "1" : "0");
+    setVisibility();
     if (window.syncRainButton) window.syncRainButton();
   };
 

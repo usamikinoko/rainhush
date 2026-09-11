@@ -148,6 +148,27 @@ main {
     text-decoration: underline;
 }
 
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+    transition:
+        background-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        fill 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        stroke 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) !important;
+}
+
+#rain-canvas {
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#rain-canvas.rain-on {
+    opacity: 1;
+}
+
 footer {
     width: 100%;
     border-top: 1px solid var(--border-light);
