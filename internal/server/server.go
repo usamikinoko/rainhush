@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -18,7 +19,20 @@ func Serve(ctx context.Context) error {
 
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir("public"))
-	mux.Handle("/", cacheMiddleware(fs))
+	mux.Handle("/", cacheMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rec := &notFoundRecorder{ResponseWriter: w}
+		fs.ServeHTTP(rec, r)
+		if rec.status != 404 {
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(404)
+		if data, err := os.ReadFile("public/404.html"); err == nil {
+			_, _ = w.Write(data)
+			return
+		}
+		_, _ = w.Write(rec.body.Bytes())
+	})))
 
 	srv := &http.Server{
 		Addr:           "127.0.0.1:" + port,
@@ -79,4 +93,24 @@ func cacheControlForPath(requestPath string) string {
 	default:
 		return "public, max-age=2592000"
 	}
+}
+
+type notFoundRecorder struct {
+	http.ResponseWriter
+	status int
+	body   bytes.Buffer
+}
+
+func (r *notFoundRecorder) WriteHeader(code int) {
+	r.status = code
+	if code != 404 {
+		r.ResponseWriter.WriteHeader(code)
+	}
+}
+
+func (r *notFoundRecorder) Write(p []byte) (int, error) {
+	if r.status == 404 {
+		return r.body.Write(p)
+	}
+	return r.ResponseWriter.Write(p)
 }

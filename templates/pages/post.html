@@ -4,7 +4,6 @@
 <article class="post">
     <h1>{{.Title}}</h1>
     <div class="post-meta-top">
-        {{/* {{if .Avatar}}<img class="post-author-avatar" src="{{.Avatar}}" alt="{{.Author}}" loading="lazy">{{end}} */}}
         <div class="post-meta-row">
             {{if .Author}}<span class="post-author">{{.Author}}</span>{{end}}
             {{if .Date}}{{if .Author}}<span class="post-meta-sep">·</span>{{end}}<time class="post-date" datetime="{{.Date}}">发布于 {{.Date}}</time>{{end}}

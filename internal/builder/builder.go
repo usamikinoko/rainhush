@@ -180,7 +180,18 @@ func Build() error {
 	if err := renderRSS(posts); err != nil {
 		return err
 	}
+	if err := ctx.render404(); err != nil {
+		return err
+	}
+	if err := renderLLMTXT(posts); err != nil {
+		return err
+	}
 
+	if _, err := os.Stat("robots.txt"); os.IsNotExist(err) {
+		if err := renderRobots(); err != nil {
+			return err
+		}
+	}
 	for _, f := range []string{"vercel.json", "robots.txt"} {
 		if src, err := os.ReadFile(f); err == nil {
 			if err := os.WriteFile(filepath.Join("public", f), src, 0644); err != nil {
@@ -456,6 +467,7 @@ func (ctx *buildContext) renderPost(tmpl *template.Template, post *Post) error {
 	return ctx.writeHTML(tmpl, filepath.Join(dir, "index.html"), ctx.pageData(map[string]interface{}{
 		"CanonicalURL":   canonicalURL,
 		"Title":          post.Title,
+		"Description":    post.Excerpt,
 		"Author":         post.Author,
 		"Date":           post.Date,
 		"UpdatedAt":      post.UpdatedAt,
@@ -790,7 +802,11 @@ func renderSitemap(posts []*Post) error {
 		add("/articles/page/"+strconv.Itoa(page)+"/", "", "0.6")
 	}
 	for _, p := range posts {
-		add("/articles/"+p.Filename+"/", p.Date, "0.7")
+		lastmod := p.Date
+		if p.UpdatedAt != "" {
+			lastmod = p.UpdatedAt
+		}
+		add("/articles/"+p.Filename+"/", lastmod, "0.7")
 	}
 
 	buf.WriteString("</urlset>")
@@ -826,6 +842,61 @@ func renderRSS(posts []*Post) error {
 
 	buf.WriteString("</channel></rss>")
 	return os.WriteFile(filepath.Join("public", "feed.xml"), buf.Bytes(), 0644)
+}
+
+func (ctx *buildContext) render404() error {
+	tmpl, err := ctx.cloneTmpl()
+	if err != nil {
+		return err
+	}
+	if _, err := tmpl.ParseFiles("templates/pages/404.html"); err != nil {
+		return err
+	}
+	return ctx.writeHTML(tmpl, filepath.Join("public", "404.html"), ctx.pageData(map[string]interface{}{
+		"Title":   "404",
+		"NoIndex": true,
+		"Nav":     navState(""),
+	}))
+}
+
+func renderRobots() error {
+	if config.Cfg.Site.URL == "" {
+		return nil
+	}
+	base := strings.TrimRight(config.Cfg.Site.URL, "/")
+	content := "User-agent: *\nAllow: /\nCrawl-delay: 10\nSitemap: " + base + "/sitemap.xml\n\n" +
+		"User-agent: Baiduspider\nAllow: /\nCrawl-delay: 5\n\n" +
+		"User-agent: Googlebot\nAllow: /\nCrawl-delay: 10\n"
+	return os.WriteFile(filepath.Join("public", "robots.txt"), []byte(content), 0644)
+}
+
+func renderLLMTXT(posts []*Post) error {
+	if config.Cfg.Site.URL == "" {
+		return nil
+	}
+	base := strings.TrimRight(config.Cfg.Site.URL, "/")
+	var buf bytes.Buffer
+	buf.WriteString("# " + siteTitle() + "\n\n")
+	if d := strings.TrimSpace(config.Cfg.Site.Description); d != "" {
+		buf.WriteString("> " + d + "\n\n")
+	}
+	buf.WriteString("## Pages\n\n")
+	buf.WriteString("- [Home](" + base + "/)\n")
+	buf.WriteString("- [Articles](" + base + "/articles.html)\n")
+	buf.WriteString("- [Friends](" + base + "/friends.html)\n")
+	buf.WriteString("- [About](" + base + "/about.html)\n")
+	buf.WriteString("- [Logs](" + base + "/logs.html)\n")
+	if len(posts) > 0 {
+		buf.WriteString("\n## Posts\n\n")
+		for _, p := range posts {
+			buf.WriteString("- [" + p.Title + "](" + base + "/articles/" + p.Filename + "/)")
+			if p.Date != "" {
+				buf.WriteString(" - " + p.Date)
+			}
+			buf.WriteString("\n")
+		}
+	}
+	return os.WriteFile(filepath.Join("public", "llm.txt"), buf.Bytes(), 0644)
 }
 
 func siteTitle() string {
