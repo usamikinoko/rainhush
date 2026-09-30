@@ -11,6 +11,7 @@
   "author": "Hypokinoko",
   "scripts": {
     "prepack": "node scripts/prepack.mjs",
+    "subset-font": "node scripts/subset-hand-font.mjs",
     "test": "go test ./..."
   },
   "bin": {

@@ -1,147 +1,348 @@
+/* ============================================================
+   Home — drafting sheet
+   Three figures:
+     Fig. 1  hero plate + statistics
+     Fig. 2  recent posts, one framed panel per category
+     Fig. 3  activity heatmap
+   ============================================================ */
+
 .home-hero {
-    padding: 40px 0 36px;
-    text-align: center;
+    position: relative;
+}
+
+/* --- Fig. 1 : the hero plate ------------------------------- */
+
+/* Three slots on one line — portrait, identity, drawing. The
+   portrait and the identity read as one group (22px apart), while
+   the drawing pins to the far edge with an auto margin: the free
+   space then lives between the words and the drawing, where air is
+   welcome, instead of splitting the portrait from its name. */
+.home-hero-figure {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--gap-3);
+    padding: 34px 30px;
+    border: var(--wire-w) solid var(--border-light);
+    min-height: 200px;
+}
+
+.home-hero-avatar-frame {
+    flex-shrink: 0;
+    width: 112px;
+    height: 112px;
+    padding: 6px;
+    border: var(--wire-w) solid var(--border-color);
+    outline: var(--wire-w) solid var(--border-light);
+    outline-offset: 5px;
+    background: var(--bg-secondary);
 }
 
 .home-hero-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-bottom: 16px;
-    border: 3px solid var(--border-color);
 }
 
-.home-hero-title {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: var(--text-color);
-    margin-bottom: 4px;
-}
-
-.home-hero-stats {
+.home-hero-id {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: baseline;
-    gap: 16px;
+}
+
+/* The title returns to the sheet's handwritten voice — the same
+   thin cursive the margin note ("have a great day") speaks in, so
+   the plate carries one name and one hand. 400, not the heading
+   weight: the script hand has no bold cut, and a heavier stroke
+   would stop reading as pencil. The size does the title work. */
+.home-hero-title {
+    font-family: var(--font-script);
+    font-size: 2.2em;
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 1.25;
+    color: var(--text-color);
+}
+
+/* --- signature badge ----------------------------------------
+   The one who signs the sheet, as a small chip: square corners —
+   the sheet has no radius anywhere — a hairline, a quiet ground
+   and compact padding around the hand-tool mark and the name in
+   the monospaced overline voice. One chip, one name: anything
+   beside it (a leader line, the domain) reads as a label/value
+   pair and the plate turns into a form. */
+.home-hero-byline {
+    margin-top: var(--gap-2);
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background-color: var(--bg-secondary);
+    border: var(--wire-w) solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.home-hero-byline-icon {
+    flex-shrink: 0;
+}
+
+/* --- schematic figure + handwritten margin note ------------- */
+
+/* The viewBox is 186 units wide, so the slot is set to the same
+   186 px: at that size one user unit is one CSS pixel, and the
+   hairlines and the hatch land on their nominal weight instead of
+   being resampled. The width is what sets the drawn size — the svg
+   fills it and keeps the aspect of its own viewBox. */
+.home-hero-art {
+    position: relative;
+    flex-shrink: 0;
+    width: 186px;
+    /* The drawing pins to the far edge of the plate (see the figure
+       comment); the identity block keeps the leftover air. */
+    margin-left: auto;
+}
+
+.hero-iso {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--text-muted);
+    overflow: visible;
+
+    /* The loop: nine cubes lift one diagonal at a time and settle
+       again, which reads as a single wave crossing the field from the
+       back to the front. --hero-step is the distance between two
+       neighbouring diagonals, so four steps carry the crest over the
+       field and the rest of the cycle is the pause before it repeats.
+
+       --hero-rise is the same number gen-hero.py reserves above the
+       field in the viewBox — raise it here and there, or the tallest
+       cube clips the top of the figure. */
+    --hero-rise: 26px;
+    --hero-cycle: 3s;
+    --hero-step: 0.4s;
+}
+
+/* The figure is scaled to its slot, so keep every edge a true hairline
+   instead of letting the viewBox thicken it. The lifts are pure
+   translations, so the stroke weight is unaffected by them. */
+.hero-iso path {
+    vector-effect: non-scaling-stroke;
+}
+
+/* The cubes. One rule for all of them, and nothing overrides it: the
+   artwork is nine repeats of the same geometry, so the only value worth
+   stating is the one hairline weight. The single declaration that has to
+   stay in the markup is the top face's fill — a paint-server URL in an
+   external sheet would resolve against the sheet instead of the page. */
+.hero-voxels {
+    stroke: var(--border-color);
+    stroke-width: var(--wire-w);
+    stroke-linejoin: round;
+}
+
+/* --d is the cell's diagonal (i + j): everything on one diagonal moves
+   together, and the negative starting delay means the wave is already
+   mid-cycle on the first paint instead of assembling itself. */
+.hero-cell {
+    animation: hero-lift var(--hero-cycle) ease-in-out infinite;
+    animation-delay: calc(var(--d) * var(--hero-step) - 2s);
+}
+
+.home-hero-note {
+    position: absolute;
+    right: calc(100% + 14px);
+    bottom: 6px;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    width: max-content;
+    text-align: right;
+    pointer-events: none;
+}
+
+.home-hero-arrow {
+    width: 40px;
+    height: 30px;
+    flex-shrink: 0;
+    color: var(--border-color);
+    margin-bottom: 8px;
+}
+
+/* --- statistics strip -------------------------------------- */
+
+.home-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: var(--gap-3);
+}
+
+.home-stat {
+    padding: var(--cell-y) var(--cell-x);
+}
+
+.home-stat dt {
     margin-bottom: 6px;
 }
 
-.home-hero-stat {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
+.home-stat dd {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-color);
 }
 
-.home-hero-stat-num {
-    color: var(--primary-color);
-}
-
-.home-hero-stat-label {
-    font-size: 0.9em;
-    color: var(--text-muted);
-}
-
-.home-hero-owner {
-    font-size: 0.85em;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-}
-
-.home-hero-divider {
-    width: 60px;
-    height: 2px;
-    background: var(--primary-color);
-    margin: 0 auto 32px;
-    border-radius: 1px;
-}
+/* ============================================================
+   Fig. 2 — four framed category panels
+   Each panel is its own box: solid header band, hatched-free grid
+   body, and a real gutter between panels so the four categories
+   read as four separate blocks instead of one run-on list.
+   ============================================================ */
 
 .home-posts {
-    margin-top: 8px;
+    margin-top: var(--gap-3);
 }
 
 .home-posts--cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap-2);
 }
 
 .home-posts-col {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    border: var(--wire-w) solid var(--border-light);
+    background-color: var(--bg-color);
 }
 
-.home-posts-col .post-item {
+/* Header band: solid fill, wide tracking, and the panel index in
+   the accent colour — the one saturated note in the block. */
+.home-posts-col-title {
+    margin: 0;
+    padding: var(--cell-y) var(--cell-x);
+    border-bottom: var(--wire-w) solid var(--border-light);
+    background-color: var(--bg-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-color);
+}
+
+.home-posts-col-name {
+    letter-spacing: 0.16em;
+}
+
+.home-posts-col-body {
     flex: 1;
+    padding: var(--cell-x);
 }
 
 .home-posts-col-empty {
     color: var(--text-muted);
-    font-size: 0.92em;
+    font-size: 0.9em;
+    padding: var(--gap-2) 0;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
 }
 
-.home-posts-col-title {
-    font-size: 1.05em;
-    font-weight: 700;
+/* --- bottom call to action --------------------------------- */
+
+.home-readmore {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--gap-3);
+}
+
+.home-readmore a {
+    display: inline-block;
+    padding: 10px 30px;
     color: var(--text-color);
-    margin-bottom: 18px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--primary-color);
+    border: var(--wire-w) solid var(--border-color);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
-@media (max-width: 768px) {
-    .home-posts--cols {
-        grid-template-columns: 1fr;
-        gap: 28px;
-    }
+.home-readmore a:hover {
+    background: var(--invert-bg);
+    border-color: var(--invert-bg);
+    color: var(--invert-text);
 }
+
+/* ============================================================
+   Post rows — a stacked list inside a category panel
+   ============================================================ */
 
 .post-item {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-light);
+    padding: var(--gap-2) 0;
+    border-top: var(--wire-w) solid var(--border-light);
 }
 
-.post-item:last-child {
-    border-bottom: none;
+.post-item:first-child {
+    border-top: none;
+    padding-top: 0;
 }
 
 .post-item-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
+    gap: var(--gap-2);
 }
 
 .post-item-row h3 {
     margin: 0;
+    min-width: 0;
 }
 
 .post-item-title {
-    color: var(--primary-color);
-    font-size: 1em;
+    color: var(--text-color);
+    font-size: 0.96em;
+    font-weight: 600;
+    line-height: 1.45;
     overflow-wrap: anywhere;
     text-decoration: none;
-    transition: color 0.15s;
+    border-bottom: var(--wire-w) solid transparent;
+    transition: color 0.15s, border-color 0.15s;
 }
 
 .post-item-title:hover {
-    text-decoration: underline;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
 }
 
 .post-item-row time {
     color: var(--text-muted);
-    font-size: 0.9em;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    margin-left: 16px;
+    flex-shrink: 0;
 }
 
 .post-item .excerpt {
     margin-top: 6px;
-    margin-bottom: 10px;
     color: var(--text-muted);
-    font-size: 0.92em;
-    line-height: 1.6;
+    font-size: 0.86em;
+    line-height: 1.7;
+    text-wrap: pretty;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -149,51 +350,88 @@
 }
 
 .post-item-more {
-    display: flex;
-    justify-content: flex-end;
+    margin-top: 6px;
 }
 
 .post-item-more a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.85em;
-    transition: color 0.15s;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    border-bottom: var(--wire-w) solid transparent;
+    transition: color 0.15s, border-color 0.15s;
 }
 
-.post-item-more a:hover {
-    color: var(--primary-color);
+.post-item-more a::after {
+    content: " →";
 }
 
-.home-readmore {
-    text-align: center;
-    margin-top: 24px;
+/* The whole row is the hover target: the Read link answers to it */
+.post-item:hover .post-item-more a {
+    color: var(--text-color);
+    border-bottom-color: var(--border-color);
 }
 
-.home-readmore a {
-    display: inline-block;
-    padding: 8px 24px;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--radius-base);
-    text-decoration: none;
-    font-size: 0.9em;
-    transition:
-        background 0.15s,
-        color 0.15s;
-}
-
-.home-readmore a:hover {
-    background: var(--primary-color);
-    color: #fff;
-}
+/* ============================================================
+   Responsive
+   ============================================================ */
 
 @media (max-width: 768px) {
+    .home-hero-figure {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--gap-3);
+        padding: 28px var(--pad);
+    }
+
+    .home-hero-art {
+        align-self: center;
+        width: 200px;
+        /* The auto margin that pinned the drawing right on wide
+           screens wins over align-self in a column, so release it. */
+        margin-left: 0;
+    }
+
+    /* Stacked, the plate reads top-down, so the identity block has to
+       claim the full column. `align-items: flex-start` on the figure
+       would otherwise shrink it to its longest line — which happens to
+       look right today and wraps the moment the tagline changes. */
+    .home-hero-id {
+        align-self: stretch;
+    }
+
+    .home-hero-note {
+        display: none;
+    }
+
+    .home-posts--cols {
+        grid-template-columns: 1fr;
+    }
+
     .post-item-row {
         flex-direction: column;
         align-items: flex-start;
+        gap: 4px;
     }
 
-    .post-item-row time {
-        margin-left: 0;
+    .home-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   Fig. 1 — the hero loop
+   One animation and one clock: the lift is the whole story. --d
+   staggers it by diagonal, so nine lifts on the same curve add up to
+   a wave. Nothing else in the figure moves or changes value.
+   ============================================================ */
+
+@keyframes hero-lift {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(calc(var(--hero-rise) * -1));
     }
 }

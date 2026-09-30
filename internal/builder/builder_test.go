@@ -33,6 +33,45 @@ func TestPrepareOutputDirPreservesGitDirectory(t *testing.T) {
 	}
 }
 
+func TestParseFriendLinks(t *testing.T) {
+	body := strings.Join([]string{
+		"欢迎交换友链：",
+		"",
+		"- ek1ng: [https://ek1ng.com/](https://ek1ng.com/)",
+		"- ch405：[主页](https://sd0ric4.github.io/)",
+		"- 没有链接的条目",
+		"- bad: [x](javascript:alert(1))",
+	}, "\n")
+
+	links, rest := parseFriendLinks(body)
+
+	if len(links) != 2 {
+		t.Fatalf("expected 2 links, got %d (%+v)", len(links), links)
+	}
+	if links[0].Nick != "ek1ng" || links[0].URL != "https://ek1ng.com/" || links[0].Host != "ek1ng.com" {
+		t.Fatalf("unexpected first link: %+v", links[0])
+	}
+	if links[1].Nick != "ch405" || links[1].Host != "sd0ric4.github.io" {
+		t.Fatalf("unexpected second link: %+v", links[1])
+	}
+	if !strings.Contains(rest, "欢迎交换友链") || strings.Contains(rest, "ek1ng") {
+		t.Fatalf("expected only the non-link lines to survive, got %q", rest)
+	}
+	if !strings.Contains(rest, "javascript") {
+		t.Fatalf("expected the unsafe link to be left as markdown, got %q", rest)
+	}
+}
+
+func TestParseFriendLinksWithoutBullets(t *testing.T) {
+	links, rest := parseFriendLinks("这里只有一段说明文字。")
+	if links != nil {
+		t.Fatalf("expected no links, got %+v", links)
+	}
+	if !strings.Contains(rest, "说明文字") {
+		t.Fatalf("expected the body to be kept as-is, got %q", rest)
+	}
+}
+
 func TestRenderMarkdownPreservesTrustedHTML(t *testing.T) {
 	rendered, err := renderMarkdown("<table><tr><td>ok</td></tr></table>")
 	if err != nil {

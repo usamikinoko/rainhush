@@ -1,0 +1,105 @@
+{{define "hero-iso"}}
+{{/* Nine cubes in a 3x3 field and nothing else — no ground plan, no
+     dimension lines, no per-cube accent. The figure draws exactly one
+     kind of rule (the group stroke below), so every edge in it carries
+     the same weight and the same value.
+
+     The faces are opaque rather than translucent — the drawing is
+     nine cubes deep and a cube has to be able to hide the one behind
+     it, which is what makes the lift read as a lift. The two sides
+     are told apart by fill weight alone (--cube-* resolves to the
+     paper toned 17% and 7% toward the text colour, so nothing here is
+     a hard-coded colour and both themes get the same relationships).
+
+     The loop is one transform animation. Each cube is rigid and only
+     ever translates, so its three faces keep their shape and the gap
+     it leaves behind shows the one behind it. The delay is one
+     diagonal apart (--d = i + j), which turns nine staggered lifts
+     into a single wave that travels from the back of the field to the
+     front and then rests before repeating.
+
+     Greyscale only: the figure takes no part in the sheet's single
+     accent colour, and every value in it is derived from the theme.
+
+     Axes are true isometric (30 / 30 / 90), edge length L = 34.641,
+     half cell 30 x 17.321. The field is 180 units wide and the viewBox
+     is 186 units wide, so at its 186 px slot one user unit is one CSS
+     pixel. */}}
+<svg class="hero-iso" viewBox="-93 -115.603 186 170.564" role="img" aria-label="Isometric field of nine cubes rising and settling in a slow travelling wave" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        {{/* the top face's material: an opaque surface plus the 45°
+           hatch, so one path is the whole face */}}
+        <pattern id="heroHatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="10" height="10" fill="var(--cube-top)" />
+            <line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="1" opacity="0.45" />
+        </pattern>
+    </defs>
+
+    {{/* --- nine cubes, back to front ----------------------------- */}}
+    <g class="hero-voxels">
+        <g transform="translate(0 -34.641)">
+            <g class="hero-cell" style="--d: 0">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(-30 -17.321)">
+            <g class="hero-cell" style="--d: 1">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(30 -17.321)">
+            <g class="hero-cell" style="--d: 1">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(-60 0)">
+            <g class="hero-cell" style="--d: 2">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(0 0)">
+            <g class="hero-cell" style="--d: 2">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(60 0)">
+            <g class="hero-cell" style="--d: 2">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(-30 17.321)">
+            <g class="hero-cell" style="--d: 3">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(30 17.321)">
+            <g class="hero-cell" style="--d: 3">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+        <g transform="translate(0 34.641)">
+            <g class="hero-cell" style="--d: 4">
+                <path d="M0 -17.321 L-30 -34.641 L-30 0 L0 17.321 Z" fill="var(--cube-left)" />
+                <path d="M30 -34.641 L0 -17.321 L0 17.321 L30 0 Z" fill="var(--cube-right)" />
+                <path d="M0 -51.962 L30 -34.641 L0 -17.321 L-30 -34.641 Z" fill="url(#heroHatch)" />
+            </g>
+        </g>
+    </g>
+</svg>
+{{end}}

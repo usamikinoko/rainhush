@@ -95,11 +95,11 @@
   };
   var fail = function (el) {
     el.hidden = false;
-    el.textContent = "内容加载失败";
+    el.textContent = "Failed to load content";
   };
   var loading = function (el) {
     el.hidden = false;
-    el.textContent = "加载中…";
+    el.textContent = "Loading…";
   };
   var list = function (el, tok) {
     loading(el);
@@ -109,7 +109,7 @@
       if (!items.length) {
         var p = document.createElement("p");
         p.className = "deep-empty";
-        p.textContent = "暂无文章";
+        p.textContent = "No posts yet";
         el.appendChild(p);
       } else {
         items.forEach(function (it) {
@@ -188,7 +188,7 @@
             input.select();
           }
         }, function () {
-          err.textContent = "当前环境不支持安全认证";
+          err.textContent = "Secure authentication is unavailable here";
           err.hidden = false;
         });
       });

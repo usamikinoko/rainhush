@@ -1,38 +1,34 @@
+/* ============================================================
+   Fig. 3 — contribution heatmap
+   The rule above it is the hatched separator band drawn by the
+   page, so this block only carries the spacing under it.
+   ============================================================ */
+
 .home-heatmap {
-    margin: 120px auto 80px;
-    max-width: 960px;
+    margin-top: var(--gap-3);
 }
 
-.heatmap-header {
+.heatmap-head {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 24px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--gap-3);
 }
 
-.heatmap-title {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: var(--text-color);
-}
-
-.heatmap-total {
-    font-size: 0.94em;
+.heatmap-head .mono {
     color: var(--text-muted);
 }
 
-.heatmap-divider {
-    width: 128px;
-    height: 2px;
-    background: var(--primary-color);
-    margin: 32px auto 0;
-    border-radius: 1px;
+.heatmap-head-title {
+    color: var(--text-color) !important;
+    letter-spacing: 0.14em;
 }
 
 /* ---- Graph area ---- */
 .heatmap-scroll {
-    padding-bottom: 6px;
+    padding-bottom: 4px;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
@@ -41,7 +37,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto 1fr;
-    gap: 4px 4px;
+    gap: 4px;
 }
 
 .heatmap-months {
@@ -49,7 +45,10 @@
     grid-row: 1;
     position: relative;
     height: 1.4em;
-    font-size: 0.82em;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--text-muted);
 }
 
@@ -64,9 +63,12 @@
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     gap: 3px;
-    font-size: 0.8em;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--text-muted);
-    padding-right: 0;
+    padding-right: 2px;
 }
 
 .heatmap-label {
@@ -89,22 +91,45 @@
 .heatmap-cell {
     position: relative;
     aspect-ratio: 1;
-    border-radius: 2px;
+    border-radius: 0;
     outline: none;
-    background: var(--border-light);
+    background: transparent;
+    box-shadow: inset 0 0 0 var(--wire-w) var(--border-light);
 }
 
 .heatmap-cell:hover,
 .heatmap-cell:focus-visible {
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 52%, transparent);
+    box-shadow: inset 0 0 0 var(--wire-w) var(--primary-color);
 }
 
-/* ---- Levels ---- */
-.heatmap-l0 { background: var(--border-light); }
-.heatmap-l1 { background: color-mix(in srgb, var(--primary-color) 25%, transparent); }
+/* ---- Levels (the only saturated colour in the system) ---- */
+.heatmap-l0 {
+    background: transparent;
+    box-shadow: inset 0 0 0 var(--wire-w) var(--border-light);
+}
+
+.heatmap-l1,
+.heatmap-l2,
+.heatmap-l3,
+.heatmap-l4 {
+    box-shadow: none;
+}
+
+.heatmap-l1 { background: color-mix(in srgb, var(--primary-color) 26%, transparent); }
 .heatmap-l2 { background: color-mix(in srgb, var(--primary-color) 50%, transparent); }
-.heatmap-l3 { background: color-mix(in srgb, var(--primary-color) 75%, transparent); }
+.heatmap-l3 { background: color-mix(in srgb, var(--primary-color) 74%, transparent); }
 .heatmap-l4 { background: var(--primary-color); }
+
+.heatmap-l1:hover,
+.heatmap-l2:hover,
+.heatmap-l3:hover,
+.heatmap-l4:hover,
+.heatmap-l1:focus-visible,
+.heatmap-l2:focus-visible,
+.heatmap-l3:focus-visible,
+.heatmap-l4:focus-visible {
+    box-shadow: inset 0 0 0 var(--wire-w) var(--text-color);
+}
 
 /* ---- Tooltip ---- */
 .heatmap-tooltip {
@@ -113,13 +138,15 @@
     bottom: calc(100% + 8px);
     transform: translateX(-50%) translateY(4px);
     width: max-content;
-    padding: 8px 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--bg-color) 94%, var(--surface-color, #111) 6%);
+    padding: 7px 10px;
+    border: var(--wire-w) solid var(--border-color);
+    border-radius: 0;
+    background: var(--bg-color);
     color: var(--text-color);
-    font-size: 0.78em;
-    line-height: 1.4;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
     text-align: center;
     max-width: min(240px, calc(100vw - 24px));
     white-space: normal;
@@ -129,7 +156,6 @@
     visibility: hidden;
     transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
     z-index: 2;
-    box-shadow: 0 10px 30px color-mix(in srgb, var(--bg-color) 65%, transparent);
 }
 
 .heatmap-tooltip::after {
@@ -139,8 +165,8 @@
     top: 100%;
     width: 8px;
     height: 8px;
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-right: var(--wire-w) solid var(--border-color);
+    border-bottom: var(--wire-w) solid var(--border-color);
     background: inherit;
     transform: translateX(-50%) rotate(45deg);
 }
@@ -154,8 +180,8 @@
 
 .heatmap-tooltip-date {
     display: block;
-    font-weight: 700;
-    color: var(--primary-color);
+    font-weight: 600;
+    color: var(--text-color);
     margin-bottom: 2px;
 }
 
@@ -164,27 +190,33 @@
     color: var(--text-muted);
 }
 
-/* ---- Legend ---- */
+/* ---- Caption + legend ---- */
+.heatmap-figcap {
+    margin-top: var(--gap-2);
+    margin-bottom: 0;
+}
+
 .heatmap-legend {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 4px;
-    margin-top: 16px;
     color: var(--text-muted);
-    font-size: 0.8em;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
 }
 
 .heatmap-legend-cell {
     width: 11px;
     height: 11px;
-    border-radius: 2px;
+    border-radius: 0;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
     .home-heatmap {
-        margin: 88px auto 64px;
+        margin-top: var(--gap-2);
     }
 
     .heatmap-scroll {
@@ -223,8 +255,9 @@
         transform: translateY(0);
     }
 
-    .heatmap-legend {
-        justify-content: flex-start;
+    .heatmap-figcap {
+        flex-direction: column;
+        align-items: flex-start;
         min-width: max-content;
     }
 }

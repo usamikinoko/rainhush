@@ -1,8 +1,11 @@
 {{define "content"}}
-<div class="container">
-<article class="post about-page">
+{{/* Serves both /about.html and /logs.html. The page is a plain sheet:
+     a small labelled head, then the markdown body drawn full width so
+     the two insets are the frame's own 20px on either side. */}}
+<div class="container container--read">
+<article class="about-page">
     <h1 class="about-title">{{.Title}}</h1>
-    <div class="post-body">
+    <div class="post-body about-body">
         {{.Content}}
     </div>
 </article>

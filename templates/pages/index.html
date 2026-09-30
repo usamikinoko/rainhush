@@ -1,109 +1,198 @@
 {{define "content"}}
-<div class="container container--wide">
-    <div class="home-hero">
-        <img
-            class="home-hero-avatar"
-            src="{{.Home.Avatar}}"
-            alt="{{.Home.Owner}}"
-            width="80"
-            height="80"
-            fetchpriority="high"
-            decoding="sync"
-        />
-        <h1 class="home-hero-title">{{.Home.Title}}</h1>
-        <div class="home-hero-stats">
-            <div class="home-hero-stat">
-                <span class="home-hero-stat-num">{{.TotalPosts}}</span>
-                <span class="home-hero-stat-label">篇</span>
+<div class="container">
+    {{/* ------------------------------------------------------------
+       Fig. 1 — overview: identity plate, caption, statistics
+       ------------------------------------------------------------ */}}
+    <section class="home-hero">
+        <div class="home-hero-figure wire-grid-bg">
+            <i class="wire-mark wire-mark--tl" aria-hidden="true"></i>
+            <i class="wire-mark wire-mark--tr" aria-hidden="true"></i>
+            <i class="wire-mark wire-mark--bl" aria-hidden="true"></i>
+            <i class="wire-mark wire-mark--br" aria-hidden="true"></i>
+
+            <div class="home-hero-avatar-frame">
+                <img
+                    class="home-hero-avatar"
+                    src="{{.Home.Avatar}}"
+                    alt="{{.Home.Owner}}"
+                    width="112"
+                    height="112"
+                    fetchpriority="high"
+                    decoding="sync"
+                />
             </div>
-            <div class="home-hero-stat">
-                <span class="home-hero-stat-num">{{.TotalWords}}</span>
-                <span class="home-hero-stat-label">字</span>
+
+            <div class="home-hero-id">
+                {{/* The Latin wordmark, not .Home.Title: the identity
+                     plate speaks in the site's standard voice, set off
+                     from the drafting grid by its own hairline box.
+                     Promoting this string into _config.yaml would
+                     rename the header and the page metadata too — see
+                     the Fig. 1 caption, same word. */}}
+                <h1 class="home-hero-title">RainHush</h1>
+                {{/* The signature: who signs the sheet. One line — a
+                     small hand-tool mark, then the name; a rule or a
+                     second value here reads as a label/value pair and
+                     turns the plate into a form. */}}
+                <p class="home-hero-byline">
+                    <svg class="home-hero-byline-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                        <path d="m15 5 4 4"/>
+                    </svg>
+                    <span>{{.Home.Owner}}</span>
+                </p>
+            </div>
+
+            <div class="home-hero-art">
+                <span class="home-hero-note script" aria-hidden="true">
+                    <span>have a<br />great day!</span>
+                    <svg class="home-hero-arrow" viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 27C13 27.5 22 19 35 5.5" />
+                        <path d="M28.5 6.5L35 5.5L32.5 12.5" />
+                    </svg>
+                </span>
+                {{template "hero-iso" .}}
             </div>
         </div>
-        <p class="home-hero-owner">{{.Home.Owner}}</p>
-        <div class="home-hero-divider"></div>
-    </div>
+
+        <div class="wire-figcap">
+            <span class="mono">Fig. 1. Overview — RainHush</span>
+            <span class="mono">Built with RainHush</span>
+        </div>
+
+        <dl class="home-stats wire-frame">
+            <div class="home-stat">
+                <dt class="mono">Articles</dt>
+                <dd>{{.TotalPosts}}</dd>
+            </div>
+            <div class="home-stat">
+                <dt class="mono">Words</dt>
+                <dd>{{.TotalWords}}</dd>
+            </div>
+            <div class="home-stat">
+                <dt class="mono">Past year</dt>
+                <dd>{{.HeatmapTotal}}</dd>
+            </div>
+        </dl>
+
+        <div class="wire-hatch" aria-hidden="true"></div>
+    </section>
+
+    {{/* ------------------------------------------------------------
+       Fig. 2 — recent posts, one framed panel per category. The four
+       panels are separated by a real gutter and each carries its own
+       rule, band and texture, so the categories read as four blocks
+       rather than one run-on list.
+       ------------------------------------------------------------ */}}
     {{if or .TechPosts .LiteTechPosts .TriviaPosts .LifePosts}}
-    <div class="home-posts home-posts--cols">
-        <section class="home-posts-col">
-            <h2 class="home-posts-col-title">Tech</h2>
-            {{range .TechPosts}}
-            <article class="post-item">
-                <div class="post-item-row">
-                    <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
-                    {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+    <section class="home-posts">
+        <div class="home-posts--cols">
+            <section class="home-posts-col">
+                <h2 class="home-posts-col-title">
+                    <span class="home-posts-col-name">Tech</span>
+                </h2>
+                <div class="home-posts-col-body wire-grid-bg">
+                    {{range .TechPosts}}
+                    <article class="post-item">
+                        <div class="post-item-row">
+                            <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
+                            {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+                        </div>
+                        {{if .Excerpt}}
+                        <p class="excerpt">{{.Excerpt}}</p>
+                        {{end}}
+                        <div class="post-item-more">
+                            <a href="/articles/{{.Filename}}/">Read</a>
+                        </div>
+                    </article>
+                    {{end}}
+                    {{if not .TechPosts}}<p class="home-posts-col-empty">/ nothing here yet</p>{{end}}
                 </div>
-                {{if .Excerpt}}
-                <p class="excerpt">{{.Excerpt}}</p>
-                {{end}}
-                <div class="post-item-more">
-                    <a href="/articles/{{.Filename}}/">Read More</a>
+            </section>
+            <section class="home-posts-col">
+                <h2 class="home-posts-col-title">
+                    <span class="home-posts-col-name">Lite Tech</span>
+                </h2>
+                <div class="home-posts-col-body wire-grid-bg">
+                    {{range .LiteTechPosts}}
+                    <article class="post-item">
+                        <div class="post-item-row">
+                            <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
+                            {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+                        </div>
+                        {{if .Excerpt}}
+                        <p class="excerpt">{{.Excerpt}}</p>
+                        {{end}}
+                        <div class="post-item-more">
+                            <a href="/articles/{{.Filename}}/">Read</a>
+                        </div>
+                    </article>
+                    {{end}}
+                    {{if not .LiteTechPosts}}<p class="home-posts-col-empty">/ nothing here yet</p>{{end}}
                 </div>
-            </article>
-            {{end}}
-            {{if not .TechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
-        </section>
-        <section class="home-posts-col">
-            <h2 class="home-posts-col-title">Lite Tech</h2>
-            {{range .LiteTechPosts}}
-            <article class="post-item">
-                <div class="post-item-row">
-                    <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
-                    {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+            </section>
+            <section class="home-posts-col">
+                <h2 class="home-posts-col-title">
+                    <span class="home-posts-col-name">Trivia</span>
+                </h2>
+                <div class="home-posts-col-body wire-grid-bg">
+                    {{range .TriviaPosts}}
+                    <article class="post-item">
+                        <div class="post-item-row">
+                            <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
+                            {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+                        </div>
+                        {{if .Excerpt}}
+                        <p class="excerpt">{{.Excerpt}}</p>
+                        {{end}}
+                        <div class="post-item-more">
+                            <a href="/articles/{{.Filename}}/">Read</a>
+                        </div>
+                    </article>
+                    {{end}}
+                    {{if not .TriviaPosts}}<p class="home-posts-col-empty">/ nothing here yet</p>{{end}}
                 </div>
-                {{if .Excerpt}}
-                <p class="excerpt">{{.Excerpt}}</p>
-                {{end}}
-                <div class="post-item-more">
-                    <a href="/articles/{{.Filename}}/">Read More</a>
+            </section>
+            <section class="home-posts-col">
+                <h2 class="home-posts-col-title">
+                    <span class="home-posts-col-name">Life</span>
+                </h2>
+                <div class="home-posts-col-body wire-grid-bg">
+                    {{range .LifePosts}}
+                    <article class="post-item">
+                        <div class="post-item-row">
+                            <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
+                            {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+                        </div>
+                        {{if .Excerpt}}
+                        <p class="excerpt">{{.Excerpt}}</p>
+                        {{end}}
+                        <div class="post-item-more">
+                            <a href="/articles/{{.Filename}}/">Read</a>
+                        </div>
+                    </article>
+                    {{end}}
+                    {{if not .LifePosts}}<p class="home-posts-col-empty">/ nothing here yet</p>{{end}}
                 </div>
-            </article>
-            {{end}}
-            {{if not .LiteTechPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
-        </section>
-        <section class="home-posts-col">
-            <h2 class="home-posts-col-title">Trivia</h2>
-            {{range .TriviaPosts}}
-            <article class="post-item">
-                <div class="post-item-row">
-                    <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
-                    {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
-                </div>
-                {{if .Excerpt}}
-                <p class="excerpt">{{.Excerpt}}</p>
-                {{end}}
-                <div class="post-item-more">
-                    <a href="/articles/{{.Filename}}/">Read More</a>
-                </div>
-            </article>
-            {{end}}
-            {{if not .TriviaPosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
-        </section>
-        <section class="home-posts-col">
-            <h2 class="home-posts-col-title">Life</h2>
-            {{range .LifePosts}}
-            <article class="post-item">
-                <div class="post-item-row">
-                    <h3><a class="post-item-title" href="/articles/{{.Filename}}/">{{.Title}}</a></h3>
-                    {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
-                </div>
-                {{if .Excerpt}}
-                <p class="excerpt">{{.Excerpt}}</p>
-                {{end}}
-                <div class="post-item-more">
-                    <a href="/articles/{{.Filename}}/">Read More</a>
-                </div>
-            </article>
-            {{end}}
-            {{if not .LifePosts}}<p class="home-posts-col-empty">还未收录文章</p>{{end}}
-        </section>
-    </div>
-    <div class="home-readmore">
-        <a href="/articles.html">更多文章</a>
-    </div>
+            </section>
+        </div>
+
+        <div class="wire-figcap">
+            <span class="mono">Fig. 2. Recent posts — filed by category</span>
+            <span class="mono">Newest first</span>
+        </div>
+
+        <div class="home-readmore">
+            <a href="/articles.html">All articles</a>
+        </div>
+    </section>
+
+    <div class="wire-hatch" aria-hidden="true"></div>
     {{else}}
-    <p>还未收录文章，你可以创建 Markdown 文档并存放于 content/posts/ 目录下</p>
-    {{end}} {{template "heatmap" .}}
+    <p>No posts yet — drop Markdown files into content/posts/ to get started.</p>
+    {{end}}
+
+    {{/* Fig. 3 — activity heatmap (see components/heatmap.html) */}}
+    {{template "heatmap" .}}
 </div>
 {{end}}

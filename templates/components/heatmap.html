@@ -1,8 +1,8 @@
 {{define "heatmap"}}
 <div class="home-heatmap">
-    <div class="heatmap-header">
-        <span class="heatmap-title">热力图</span>
-        <span class="heatmap-total">过去一年共 {{.HeatmapTotal}} 篇更新</span>
+    <div class="heatmap-head">
+        <span class="mono heatmap-head-title">Activity</span>
+        <span class="mono">{{.HeatmapTotal}} posts in the past year</span>
     </div>
     <div class="heatmap-scroll">
         <div class="heatmap-grid">
@@ -13,19 +13,21 @@
                 {{range .HeatmapDayLabels}}<span class="heatmap-label">{{.}}</span>{{end}}
             </div>
             <div class="heatmap-weeks">
-                {{range .HeatmapCells}}<span class="heatmap-cell heatmap-l{{.Level}}" tabindex="0"><span class="heatmap-tooltip"><span class="heatmap-tooltip-date">{{.Date}}</span><span class="heatmap-tooltip-count">{{if eq .Count 0}}无更新{{else}}{{.Count}} 篇更新{{end}}</span></span></span>{{end}}
+                {{range .HeatmapCells}}<span class="heatmap-cell heatmap-l{{.Level}}" tabindex="0"><span class="heatmap-tooltip"><span class="heatmap-tooltip-date">{{.Date}}</span><span class="heatmap-tooltip-count">{{if eq .Count 0}}No posts{{else}}{{.Count}} posts{{end}}</span></span></span>{{end}}
             </div>
         </div>
     </div>
-    <div class="heatmap-legend" aria-hidden="true">
-        <span>Less</span>
-        <span class="heatmap-legend-cell heatmap-l0"></span>
-        <span class="heatmap-legend-cell heatmap-l1"></span>
-        <span class="heatmap-legend-cell heatmap-l2"></span>
-        <span class="heatmap-legend-cell heatmap-l3"></span>
-        <span class="heatmap-legend-cell heatmap-l4"></span>
-        <span>More</span>
+    <div class="wire-figcap heatmap-figcap">
+        <span class="mono">Fig. 3. Activity heatmap — by day</span>
+        <span class="heatmap-legend" aria-hidden="true">
+            <span>Less</span>
+            <span class="heatmap-legend-cell heatmap-l0"></span>
+            <span class="heatmap-legend-cell heatmap-l1"></span>
+            <span class="heatmap-legend-cell heatmap-l2"></span>
+            <span class="heatmap-legend-cell heatmap-l3"></span>
+            <span class="heatmap-legend-cell heatmap-l4"></span>
+            <span>More</span>
+        </span>
     </div>
-    <div class="heatmap-divider"></div>
 </div>
 {{end}}

@@ -2,23 +2,38 @@
 <div class="container">
 <div class="articles-header">
     <h1>{{.Title}}</h1>
+    <span class="mono">{{len .Posts}} posts</span>
 </div>
 {{if .Posts}}
-{{range .Posts}}
-<article class="post-list-item">
-    <a href="/articles/{{.Filename}}/">{{.Title}}</a>
-    {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
-</article>
-{{end}}
-<nav class="pagination" aria-label="Pagination">
-    {{if .HasPrev}}<a href="{{.PrevURL}}">上一页</a>{{else}}<span class="page-disabled">上一页</span>{{end}}
+{{/* The index is a .wire-frame ledger: a filled head band, then one
+     row per entry — title on the left, date hard right. Hover draws
+     the sheet's hatch plus a primary inset rule; the type itself
+     never changes color. */}}
+<div class="post-list wire-frame">
+    <div class="post-list-head" aria-hidden="true">
+        <span>Title</span>
+        <span>Date</span>
+    </div>
+    {{range .Posts}}
+    <article class="post-list-item">
+        <a href="/articles/{{.Filename}}/">{{.Title}}</a>
+        {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+    </article>
+    {{end}}
+</div>
+<div class="wire-figcap">
+    <span class="mono">Fig. 1. Article index — newest first</span>
+    <span class="mono">Source: content/posts</span>
+</div>
+<nav class="pagination wire-frame" aria-label="Pagination">
+    {{if .HasPrev}}<a href="{{.PrevURL}}">Prev</a>{{else}}<span class="page-disabled">Prev</span>{{end}}
     {{range .PageItems}}
     {{if .Current}}<span class="page-current">{{.Number}}</span>{{else}}<a href="{{.URL}}">{{.Number}}</a>{{end}}
     {{end}}
-    {{if .HasNext}}<a href="{{.NextURL}}">下一页</a>{{else}}<span class="page-disabled">下一页</span>{{end}}
+    {{if .HasNext}}<a href="{{.NextURL}}">Next</a>{{else}}<span class="page-disabled">Next</span>{{end}}
 </nav>
 {{else}}
-<p>No articles yet.</p>
+<p class="articles-empty">No articles yet.</p>
 {{end}}
 </div>
 {{end}}

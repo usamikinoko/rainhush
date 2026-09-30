@@ -1,23 +1,23 @@
 {{define "content"}}
 <div class="container">
     <div class="auth-hero">
-        <h2 class="auth-title">Private Access</h2>
-        <p class="auth-desc">此区域仅对受邀访客开放，请输入访问口令</p>
+        <h2 class="auth-title">Private access</h2>
+        <p class="auth-desc">This area is open to invited guests only. Enter the passphrase to continue.</p>
         <form class="auth-form" id="deep-auth-form">
-            <label class="auth-label" for="deep-auth-input">访问口令</label>
+            <label class="auth-label" for="deep-auth-input">Passphrase</label>
             <input
                 class="auth-input"
                 id="deep-auth-input"
                 type="password"
                 inputmode="numeric"
                 autocomplete="current-password"
-                placeholder="访问口令"
+                placeholder="Passphrase"
                 required
                 maxlength="32"
             />
-            <button class="auth-submit" type="submit">验证</button>
+            <button class="auth-submit" type="submit">Verify</button>
         </form>
-        <p class="auth-error" id="deep-auth-error" hidden>口令错误</p>
+        <p class="auth-error" id="deep-auth-error" hidden>Incorrect passphrase</p>
         <div class="auth-divider"></div>
     </div>
 </div>

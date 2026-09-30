@@ -1,47 +1,107 @@
-﻿.friends-page {
-    padding-top: 24px;
+﻿/* ============================================================
+   Friends — a two-column card wall on the sheet.
+
+   The wall is one .wire-frame: hairlines are the frame's own
+   background showing through 1px gaps, cards only carry a
+   background. Hover is drawn with the sheet's hatch texture and
+   a primary inset rule, never with a color swap on the text.
+   ============================================================ */
+
+.friends-page {
+    min-width: 0;
 }
 
+/* Same labelled head as the article index and the about page */
 .friends-title {
-    font-size: 1.8em;
-    font-weight: 700;
-    margin-bottom: 28px;
+    margin: 0 0 var(--gap-3);
+    font-size: 1.08em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
     color: var(--text-color);
 }
 
+/* Prose from friends.md that is not a link bullet lands above the
+   wall (see parseFriendLinks); with no prose this stays empty. */
+.friends-note {
+    margin: 0 0 var(--gap-3);
+}
+
+.friend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.friend-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: var(--gap-2);
+    row-gap: 3px;
+    padding: var(--cell-y) var(--cell-x);
+    color: inherit;
+    text-decoration: none;
+    transition: box-shadow 0.15s;
+}
+
+.friend-name {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--text-color);
+    overflow-wrap: anywhere;
+}
+
+.friend-host {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+}
+
+/* The ↗ occupies the second column of the name's row, riding the
+   nickname's baseline via the card's align-items. */
+.friend-card::after {
+    content: "↗";
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    color: var(--text-muted);
+    transition: color 0.15s, transform 0.15s;
+}
+
+/* Hover accent sits exactly ON the card's own edge — one 1px rule,
+   the same nominal width as the frame's hairlines. A wider inset
+   would stack on the neighbouring 1px gap line and read as a thick
+   double edge between two cells. */
+.friend-card:hover {
+    background-image: var(--hatch-pattern-strong);
+    box-shadow: inset var(--wire-w) 0 0 var(--primary-color);
+}
+
+.friend-card:hover::after {
+    color: var(--primary-color);
+    transform: translate(2px, -2px);
+}
+
+/* An odd count in two columns would leave one empty cell, and the
+   frame's background would show through it as a solid block — so
+   the last card takes the whole row instead. */
+.friend-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+/* Fallback when friends.md carries no link bullets at all: the page
+   renders as a plain markdown sheet, same as the about page. */
 .friends-body {
     line-height: 1.8;
 }
 
-.friends-body ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.friends-body li {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-light);
-}
-
-.friends-body li:last-child {
-    border-bottom: none;
-}
-
-.friends-body a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-size: 1.05em;
-    font-weight: 500;
-    transition: color 0.15s;
-}
-
-.friends-body a:hover {
-    text-decoration: underline;
-}
-
-.friends-body p {
-    margin-top: 28px;
-    color: var(--text-muted);
-    font-size: 0.92em;
+@media (max-width: 640px) {
+    .friend-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }

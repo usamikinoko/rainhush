@@ -1,47 +1,88 @@
+/* ============================================================
+   Articles — the index as a ledger on the sheet.
+
+   The list is one .wire-frame: a filled head band (Title / Date),
+   then a row per entry separated by the frame's own 1px gaps.
+   Rows hover with the hatch texture and a primary inset rule;
+   the type itself never changes color.
+   ============================================================ */
+
 .articles-header {
-    margin-bottom: 28px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-2);
+    margin-bottom: var(--gap-3);
 }
 
+/* Same labelled head as the friends and about pages */
 .articles-header h1 {
-    font-size: 1.4em;
-    margin-bottom: 4px;
+    margin: 0;
+    font-size: 1.08em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-color);
+}
+
+.post-list-head,
+.post-list-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--cell-x);
+    padding: var(--cell-y) var(--cell-x);
+}
+
+.post-list-head {
+    background-color: var(--bg-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.post-list-head span:last-child {
+    text-align: right;
 }
 
 .post-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    padding: 5px 0;
+    transition: box-shadow 0.15s;
 }
 
 .post-list-item a {
-    color: var(--primary-color);
+    color: var(--text-color);
     text-decoration: none;
-    font-size: 1em;
+    font-size: 0.95em;
+    font-weight: 500;
     overflow-wrap: anywhere;
-}
-
-.post-list-item a:hover {
-    text-decoration: underline;
 }
 
 .post-list-item time {
     color: var(--text-muted);
-    font-size: 0.9em;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    margin-left: 16px;
+    text-align: right;
 }
 
+.post-list-item:hover {
+    background-image: var(--hatch-pattern-strong);
+    box-shadow: inset var(--wire-w) 0 0 var(--primary-color);
+}
+
+/* Pagination is a control, not a list row — but it is drawn by the
+   same hand as the ledger above it: one wire-frame, flush cells, no
+   inner inset. The frame's hairlines are the whole box, and the
+   current page is the one inverted cell. */
 .pagination {
-    display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 32px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-light);
+    align-items: stretch;
+    width: fit-content;
+    margin: var(--gap-3) auto 0;
 }
 
 .pagination a,
@@ -49,47 +90,45 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 34px;
-    height: 34px;
-    padding: 0 8px;
-    border-radius: var(--radius-base);
-    font-size: 0.9em;
+    min-width: 44px;
+    padding: var(--cell-y) var(--cell-x);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
     text-decoration: none;
     color: var(--text-muted);
-    border: 1px solid var(--border-color);
-    background: color-mix(in srgb, var(--btn-bg) 93%, transparent);
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: color 0.15s;
 }
 
 .pagination a:hover {
     color: var(--text-color);
-    border-color: var(--primary-color);
-    background: transparent;
+    background-image: var(--hatch-pattern-strong);
 }
 
 .pagination .page-current {
-    color: #fff;
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--text-color);
+    color: var(--bg-color);
 }
 
 .pagination .page-disabled {
-    opacity: 0.4;
-    cursor: default;
-}
-
-.pagination .page-disabled:hover {
-    color: var(--text-muted);
-    border-color: var(--border-color);
+    opacity: 0.45;
 }
 
 @media (max-width: 640px) {
+    .post-list-head,
     .post-list-item {
-        flex-direction: column;
-        align-items: flex-start;
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 3px;
     }
 
+    /* The date keeps its value, it just moves under the title: one
+       column per row, titles still scannable on a phone. */
     .post-list-item time {
-        margin-left: 0;
+        grid-column: 1;
+        text-align: left;
+    }
+
+    .post-list-head > :last-child {
+        display: none;
     }
 }

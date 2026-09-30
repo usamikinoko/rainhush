@@ -1,6 +1,11 @@
 public/
 .public.git.keep/
-static/fonts/
+# Font binaries stay out of the repo — the title face is the exception:
+# it is a 2 KB prepared subset that has to exist at build time, or the
+# @font-face in layout.css has nothing to load. Rebuild with
+# `npm run subset-font`; the rest of this directory stays untracked.
+static/fonts/*
+!static/fonts/ma-shan-zheng.woff2
 .tmp/
 .agents/
 .idea/

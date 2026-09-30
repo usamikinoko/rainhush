@@ -4,7 +4,7 @@ function copyCode(btn) {
     var code = btn.closest('.code-block').querySelector('code').textContent;
     var textSpan = btn.querySelector('.copy-text');
     var finish = function (ok) {
-        textSpan.textContent = ok ? 'Copied!' : 'Failed';
+        textSpan.textContent = ok ? 'Copied' : 'Copy failed';
         btn.classList.toggle('copied', ok);
         setTimeout(function () {
             textSpan.textContent = 'Copy';

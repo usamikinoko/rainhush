@@ -18,7 +18,7 @@
 
 ::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: var(--radius-base);
+    border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -34,50 +34,294 @@ html {
     scrollbar-gutter: stable;
 }
 
+/* Author `display` declarations beat the UA's [hidden] rule, so
+   state this once instead of guarding every component. */
+[hidden] {
+    display: none !important;
+}
+
+/* ============================================================
+   Webface — the handwritten voice on the sheet
+
+   A brush face, self-hosted, shipped as a ~2 KB subset holding only
+   the Chinese the sheet actually draws. A font file smaller than the
+   favicon is the whole point: a full CJK face would be a few
+   megabytes to render a few characters.
+
+   Latin does NOT come from here. The Latin half of the handwritten
+   voice is whatever script hand the visitor already owns (see
+   --font-script) — a thin, monoline cursive that reads as pencil on
+   a drawing, and the lighter of the two. The brush face is only for
+   Chinese, which is why `unicode-range` pins it to CJK: a Latin word
+   would otherwise be set in the heavy brush stroke and out-weigh the
+   note beside it.
+
+   Rebuild it with `npm run subset-font` (see scripts/subset-hand-font.mjs).
+   ============================================================ */
+@font-face {
+    font-family: "Ma Shan Zheng";
+    font-style: normal;
+    /* One weight serving a 700 request. Declaring the *range* is what
+       keeps the browser from faking the bold: a double-struck brush
+       face is exactly the kind of smear that ruins it at title size. */
+    font-weight: 400 700;
+    font-display: swap;
+    /* Chinese only, and only the ranges the subset can hold. Anything
+       outside them — every Latin glyph included — falls straight
+       through to the next family in --font-script, so the two scripts
+       never mix within one word. */
+    unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF01-FF60;
+    src: url("/static/fonts/ma-shan-zheng.woff2") format("woff2");
+}
+
+/* ============================================================
+   Design tokens — wireframe / technical-drawing theme
+   All neutrals are fully desaturated (HSL saturation = 0).
+   --primary-color is the ONLY saturated colour in the system.
+   Hex values were derived with Rec.709 luma from the previous
+   tinted palette, e.g. #101114 -> #111111, #282a2d -> #2a2a2a.
+
+   Contrast pass: the two surfaces (--bg-color) are fixed; every
+   *white* on dark, and every *black/grey* on light, was pushed
+   further from its surface so the hairlines and the text carry.
+   Affected: text-color, text-muted, border-color, border-light,
+   footer-color, blockquote-color, --hatch, --grid-line.
+   ============================================================ */
 :root {
-    --radius-base: 8px;
-    --bg-color: #101114;
-    --bg-secondary: #282a2d;
-    --bg-tertiary: #3c3e42;
-    --text-color: #e8eaed;
-    --text-muted: #9aa0a6;
+    --font-sans:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    --font-mono:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    /* The handwritten voice. Two scripts, two hands, on purpose: the
+       brush face above sets any Chinese, and the Latin always lands on
+       the system cursive — a thin monoline hand that matches the
+       hairlines of the drawing. The subset carries no Latin, so the
+       English title, the signature and the margin note are all set by
+       that one cursive and read as a single lighter hand. */
+    --font-script:
+        "Ma Shan Zheng", "华文行楷", "STXingkai", "方正舒体", "FZShuTi",
+        "Segoe Script", "Bradley Hand", "Snell Roundhand", "Apple Chancery",
+        "Brush Script MT", cursive;
+
+    --frame-w: 1080px;
+    --wire-w: 1px;
+
+    /* ---- Spacing scale --------------------------------------
+       One rhythm for every padding and margin on the site, so the
+       two sides of a block always measure the same.
+       --pad      : page frame inset (left = right by construction)
+       --pad-read : the wider inset used by long-form pages — a full
+                    column of prose wants more air at the edges than a
+                    list or a grid does
+       --pad-toc  : the tighter inset used by the article sidebar — a
+                    navigation rail reads better when it hugs its own
+                    rules instead of echoing the page inset
+       --gap-*    : distance between stacked blocks
+       --cell-*   : padding inside a table / list cell
+       ---------------------------------------------------------- */
+    --pad: 20px;
+    --pad-read: 28px;
+    --pad-toc: 14px;
+    --pad-top: 26px;
+    /* the bottom inset is deliberately larger: it has to balance
+       the sticky header sitting directly above the frame */
+    --pad-bottom: 40px;
+    --gap-1: 8px;
+    --gap-2: 14px;
+    --gap-3: 22px;
+    --gap-4: 34px;
+    --cell-x: 16px;
+    --cell-y: 12px;
+
+    --bg-color: #111111;
+    --bg-secondary: #2e2e2e;
+    --text-color: #f7f7f7;
+    --text-muted: #b6b6b6;
     --primary-color: #029e9e;
-    --primary-hover: #016666;
-    --border-color: #3c4043;
-    --border-light: #303134;
-    --code-bg: #282a2d;
-    --card-bg: #282a2d;
-    --footer-color: #80868b;
-    --btn-bg: #303134;
-    --btn-hover-bg: #3c4043;
-    --rain-color: 210,225,245;
-    --switch-bg: #5f6368;
-    --switch-thumb: #e8eaed;
-    --blockquote-bg: #282a2d;
-    --blockquote-color: #9aa0a6;
+    --border-color: #5c5c5c;
+    --border-light: #3c3c3c;
+    --code-bg: #1a1a1a;
+    --card-bg: #161616;
+    --footer-color: #9c9c9c;
+    --btn-bg: #1c1c1c;
+    --btn-hover-bg: #2e2e2e;
+    --rain-color: 235, 235, 235;
+    --blockquote-color: #b6b6b6;
+
+    --hatch: rgba(255, 255, 255, 0.12);
+    --hatch-strong: rgba(255, 255, 255, 0.2);
+    --grid-line: rgba(255, 255, 255, 0.06);
+    --invert-bg: #f7f7f7;
+    --invert-text: #111111;
+
+    /* 45° hatching, declared once as tokens so every band and every
+       hover state draws the same texture. They resolve --hatch and
+       --wire-w per element, so the light theme only overrides those. */
+    --hatch-pattern: repeating-linear-gradient(
+        45deg,
+        var(--hatch) 0 var(--wire-w),
+        transparent var(--wire-w) 7px
+    );
+    --hatch-pattern-strong: repeating-linear-gradient(
+        45deg,
+        var(--hatch-strong) 0 var(--wire-w),
+        transparent var(--wire-w) 7px
+    );
+    --grid-pattern:
+        linear-gradient(var(--grid-line) var(--wire-w), transparent var(--wire-w)),
+        linear-gradient(90deg, var(--grid-line) var(--wire-w), transparent var(--wire-w));
+
+    /* The three faces of a hero cube. The two sides keep the exact
+       weights the old translucent fills used — 17% and 7% of the
+       way from the paper to the text colour — but they are opaque
+       now: the hero drawing is nine cubes deep, and a cube has to be
+       able to hide the one behind it. The top is the surface the
+       hatch is drawn on. Derived, so they resolve in both themes
+       from one declaration. */
+    --cube-top: var(--card-bg);
+    --cube-left: color-mix(in srgb, var(--text-muted) 17%, var(--bg-color));
+    --cube-right: color-mix(in srgb, var(--text-muted) 7%, var(--bg-color));
 }
 
 [data-theme="light"] {
-    --radius-base: 8px;
     --bg-color: #fafafa;
-    --bg-secondary: #f0f2f5;
-    --bg-tertiary: #dde1e6;
-    --text-color: #1a1a2e;
-    --text-muted: #4a4d5e;
+    --bg-secondary: #ededed;
+    --text-color: #141414;
+    --text-muted: #3a3a3a;
     --primary-color: #049c9c;
-    --primary-hover: #087171;
-    --border-color: #b0b8c1;
-    --border-light: #d8dce3;
-    --code-bg: #f0f2f5;
-    --card-bg: #fafbfc;
-    --footer-color: #6e7280;
-    --btn-bg: #f0f2f5;
-    --btn-hover-bg: #e4e7ec;
-    --switch-bg: #a0a8b4;
-    --switch-thumb: #ffffff;
-    --blockquote-bg: #f5f6f8;
-    --rain-color: 40,55,90;
-    --blockquote-color: #3a3d4a;
+    --border-color: #a6a6a6;
+    --border-light: #cfcfcf;
+    --code-bg: #f6f6f6;
+    --card-bg: #fcfcfc;
+    --footer-color: #5c5c5c;
+    --btn-bg: #ededed;
+    --btn-hover-bg: #e0e0e0;
+    --rain-color: 54, 54, 54;
+    --blockquote-color: #2e2e2e;
+
+    --hatch: rgba(0, 0, 0, 0.09);
+    --hatch-strong: rgba(0, 0, 0, 0.14);
+    --grid-line: rgba(0, 0, 0, 0.07);
+    --invert-bg: #141414;
+    --invert-text: #fafafa;
+}
+
+:focus-visible {
+    outline: var(--wire-w) solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ============================================================
+   Wireframe primitives
+   ============================================================ */
+
+/* Monospaced overline label — figure numbers, meta, table heads.
+   Tabular figures so dates and counts line up column-wise. */
+.mono {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+/* Handwritten annotation text — kept as the one soft, human voice
+   on an otherwise strictly ruled page. */
+.script {
+    font-family: var(--font-script);
+    font-size: 1.22rem;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+/* One weight and leading for every heading on the sheet, so each
+   component only has to pick a size. 600 rather than 700: a bold
+   CJK face at 700 closes up the counters at these sizes. */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+/* 45° hatching, used for separator bands and as hover feedback */
+.wire-hatch {
+    height: 26px;
+    margin-top: var(--gap-3);
+    border-top: var(--wire-w) solid var(--border-light);
+    border-bottom: var(--wire-w) solid var(--border-light);
+    background-image: var(--hatch-pattern);
+    margin-inline: calc(var(--pad, 20px) * -1);
+}
+
+/* Drafting-paper coordinate grid */
+.wire-grid-bg {
+    background-image: var(--grid-pattern);
+    background-size: 26px 26px;
+}
+
+/* Registration crosshair, positioned by modifier */
+.wire-mark {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.wire-mark::before,
+.wire-mark::after {
+    content: "";
+    position: absolute;
+    background: var(--border-color);
+}
+
+.wire-mark::before {
+    left: 50%;
+    top: 0;
+    width: var(--wire-w);
+    height: 100%;
+    transform: translateX(-50%);
+}
+
+.wire-mark::after {
+    top: 50%;
+    left: 0;
+    height: var(--wire-w);
+    width: 100%;
+    transform: translateY(-50%);
+}
+
+.wire-mark--tl { top: -6px; left: -6px; }
+.wire-mark--tr { top: -6px; right: -6px; }
+.wire-mark--bl { bottom: -6px; left: -6px; }
+.wire-mark--br { bottom: -6px; right: -6px; }
+
+/* ------------------------------------------------------------
+   Hairline frame — every rule is drawn exactly once, by the
+   parent. The frame paints a 1px gutter between its children and
+   around them; the children only carry a background. This is what
+   replaces the old "parent border + child border" stacking, where
+   a panel and its rows each drew their own line.
+   ------------------------------------------------------------ */
+.wire-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wire-w);
+    background-color: var(--border-light);
+    border: var(--wire-w) solid var(--border-light);
+}
+
+:where(.wire-frame) > * {
+    min-width: 0;
+    background-color: var(--bg-color);
 }
 
 #rain-canvas {
@@ -88,12 +332,16 @@ html {
     height: 100%;
     pointer-events: none;
     z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#rain-canvas.rain-on {
+    opacity: 1;
 }
 
 body {
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-        "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    font-family: var(--font-sans);
     line-height: 1.6;
     color: var(--text-color);
     background: var(--bg-color);
@@ -106,47 +354,97 @@ main {
     flex: 1;
     width: 100%;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     z-index: 1;
 }
 
-.container {
-    max-width: 960px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 24px 20px 40px;
+/* The page frame: every top-level container carries the two
+   continuous vertical rules that give the drawing its outer box. */
+main > .container {
+    flex: 1;
+    border-left: var(--wire-w) solid var(--border-light);
+    border-right: var(--wire-w) solid var(--border-light);
 }
 
-.container--wide {
-    max-width: 1280px;
+.container {
+    max-width: var(--frame-w);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--pad-top) var(--pad) var(--pad-bottom);
+}
+
+/* ---- figure caption ------------------------------------------
+   Sits directly under a wire-frame figure, same gutter as the
+   frame's own cells so the two columns of text line up with it. */
+.wire-figcap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-2);
+    flex-wrap: wrap;
+    margin-top: var(--gap-2);
+}
+
+.wire-figcap > :last-child {
+    text-align: right;
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 20px 16px 36px;
+        --pad: 16px;
+        --pad-top: 20px;
+        --pad-bottom: 36px;
+        padding: var(--pad-top) var(--pad) var(--pad-bottom);
     }
+}
+
+/* Long-form pages opt into the wider reading inset. Declared after the
+   breakpoint above, whose `padding` shorthand would otherwise reset the
+   horizontal insets back to --pad. */
+.container--read {
+    padding-inline: var(--pad-read);
 }
 
 .error-page {
     text-align: center;
-    padding: 80px 0;
+    padding: 64px 24px;
+    border: var(--wire-w) solid var(--border-light);
 }
 
 .error-page h1 {
-    font-size: 4em;
-    color: var(--primary-color);
+    font-family: var(--font-mono);
+    font-size: 3.4em;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--text-color);
+}
+
+.error-page p {
+    margin-top: 10px;
+    color: var(--text-muted);
 }
 
 .error-page-link {
     display: inline-block;
-    margin-top: 20px;
-    color: var(--primary-color);
+    margin-top: 24px;
+    padding: 8px 22px;
+    border: var(--wire-w) solid var(--border-color);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
     text-decoration: none;
-    font-size: 1.1em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .error-page-link:hover {
-    text-decoration: underline;
+    background: var(--invert-bg);
+    border-color: var(--invert-bg);
+    color: var(--invert-text);
 }
 
 html.theme-anim *,
@@ -161,31 +459,41 @@ html.theme-anim *::after {
         stroke 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) !important;
 }
 
-#rain-canvas {
-    opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-#rain-canvas.rain-on {
-    opacity: 1;
-}
-
+/* ---- footer ---------------------------------------------------
+   The footer closes the drawing, so it gets the same treatment as
+   any other framed block: room enough to breathe on both sides of
+   its content. The vertical inset is deliberately the widest gap in
+   the scale — it is the last thing on the page and it should not
+   look pressed against the end of the frame. The rule above it is
+   the container's own bottom padding (--pad-bottom), so the two
+   insets add up rather than fight.
+   --------------------------------------------------------------- */
 footer {
     width: 100%;
-    border-top: 1px solid var(--border-light);
+    border-top: var(--wire-w) solid var(--border-light);
     position: relative;
     z-index: 1;
+    /* Plain ground: the footer closes the sheet, and a quiet solid
+       surface reads calmer than a texture would at the very end of
+       the page. The single rule above is the only ornament. */
+    background-color: var(--bg-color);
 }
 
 .footer-inner {
-    max-width: 1200px;
+    max-width: var(--frame-w);
     margin: 0 auto;
-    padding: 20px;
+    padding: var(--gap-4) var(--pad);
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
+    gap: var(--gap-4);
     color: var(--footer-color);
-    font-size: 0.9em;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    line-height: 1.9;
+    border-left: var(--wire-w) solid var(--border-light);
+    border-right: var(--wire-w) solid var(--border-light);
 }
 
 .footer-copy {
@@ -196,27 +504,32 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
 }
 
 .footer-info p {
     margin: 0;
 }
 
+/* The link column is its own block behind a full-height rule, so it
+   needs the same air the text column got: a hairline-height gap
+   would read as a single paragraph of two lines. */
 .footer-links {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    align-self: stretch;
+    gap: var(--gap-1);
 }
 
 .footer-link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 7px;
     color: var(--footer-color);
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     transition: color 0.15s;
 }
 
@@ -229,13 +542,15 @@ footer {
 }
 
 .footer-brand-link {
-    color: var(--footer-color);
-    text-decoration: underline;
-    transition: color 0.15s;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: var(--wire-w) dashed var(--border-color);
+    transition: color 0.15s, border-color 0.15s;
 }
 
 .footer-brand-link:hover {
     color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -285,7 +600,15 @@ main.page-leaving {
 @media (max-width: 480px) {
     .footer-inner {
         flex-direction: column;
-        gap: 10px;
-        text-align: center;
+        align-items: flex-start;
+        gap: var(--gap-3);
+        padding-block: var(--gap-3);
+        text-align: left;
+    }
+
+    /* Stacked on the same plain ground; the column keeps the full
+       width so the two blocks read as one quiet footer. */
+    .footer-links {
+        width: 100%;
     }
 }

@@ -1,55 +1,51 @@
 .extension-error {
     margin: 1rem 0;
     padding: 0.75rem 1rem;
-    border-left: 3px solid #d97706;
-    border-radius: var(--radius-base);
-    background: color-mix(in srgb, #d97706 12%, var(--card-bg));
+    border: var(--wire-w) solid var(--border-color);
+    background-image: var(--hatch-pattern);
     color: var(--text-color);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
 }
 
+/* ============================================================
+   Code blocks
+   ============================================================ */
+
 .code-block {
-    margin: 16px 0;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-base);
+    display: flex;
+    flex-direction: column;
+    gap: var(--wire-w);
+    margin: var(--gap-3) 0;
+    background-color: var(--border-light);
+    border: var(--wire-w) solid var(--border-light);
     overflow: hidden;
-    background: color-mix(in srgb, var(--card-bg) 93%, transparent);
 }
 
 .code-block-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 var(--cell-x);
     height: 36px;
-    background: color-mix(in srgb, var(--bg-secondary) 93%, transparent);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
     user-select: none;
 }
 
 .code-block-header-left {
     display: flex;
     align-items: center;
+    min-width: 0;
 }
 
 .code-block-lang {
-    font-size: 0.75em;
+    font-size: 0.7rem;
     font-weight: 500;
     color: var(--text-muted);
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    letter-spacing: 0.02em;
-}
-
-.code-block-lang::before {
-    content: '';
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    margin-right: 8px;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
 }
 
 .code-block-header-right {
@@ -60,36 +56,38 @@
 .copy-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     padding: 3px 10px;
-    font-size: 0.75em;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
     color: var(--text-muted);
-    background: var(--btn-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-base);
+    background: transparent;
+    border: var(--wire-w) solid var(--border-light);
     cursor: pointer;
-    line-height: 1.5;
+    line-height: 1.6;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .copy-btn:hover {
     background: var(--btn-hover-bg);
-    border-color: var(--primary-color);
+    border-color: var(--border-color);
     color: var(--text-color);
 }
 
 .copy-btn:active {
-    background: var(--border-color);
+    background: var(--btn-bg);
 }
 
 .copy-btn.copied {
-    color: #1a7f37;
-    border-color: #1a7f37;
-    background: rgba(26, 127, 55, 0.12);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: transparent;
 }
 
 .copy-btn.copied .copy-icon {
-    stroke: #1a7f37;
+    stroke: var(--primary-color);
 }
 
 .copy-icon {
@@ -100,8 +98,8 @@
 
 .code-block pre {
     margin: 0;
-    padding: 16px;
-    background: color-mix(in srgb, var(--code-bg) 93%, transparent);
+    padding: var(--cell-x);
+    background-color: var(--code-bg);
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
@@ -117,7 +115,7 @@
 
 .code-block pre::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: var(--radius-base);
+    border-radius: 0;
 }
 
 .code-block pre::-webkit-scrollbar-thumb:hover {
@@ -126,19 +124,20 @@
 
 .code-block pre code {
     background: transparent;
+    border: none;
     padding: 0;
-    font-size: 0.88em;
-    line-height: 1.55;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    /* one notch up from the body, so code does not shrink with it */
+    font-size: 0.92em;
+    line-height: 1.65;
+    font-family: var(--font-mono);
     color: var(--text-color);
 }
 
 pre.mermaid {
-    margin: 16px 0;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-base);
-    background: color-mix(in srgb, var(--card-bg) 93%, transparent);
+    margin: var(--gap-3) 0;
+    padding: var(--gap-3);
+    border: var(--wire-w) solid var(--border-light);
+    background: var(--card-bg);
     overflow-x: auto;
     text-align: center;
 }

@@ -6,8 +6,10 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"fmt"
+	stdhtml "html"
 	"html/template"
 	"math"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -71,6 +73,9 @@ type heatmapMonth struct {
 
 type renderedMarkdown struct {
 	html string
+	// body is the markdown source after the front matter, kept so pages
+	// that need the raw structure (the friends list) can parse it.
+	body string
 }
 
 type buildContext struct {
@@ -93,6 +98,7 @@ func newBuildContext() (*buildContext, error) {
 		"templates/components/header.html",
 		"templates/components/footer.html",
 		"templates/components/heatmap.html",
+		"templates/components/hero-iso.html",
 	)
 	if err != nil {
 		return nil, fmt.Errorf("parse shared templates: %w", err)
@@ -472,6 +478,7 @@ func (ctx *buildContext) renderPost(tmpl *template.Template, post *Post) error {
 		"Date":           post.Date,
 		"UpdatedAt":      post.UpdatedAt,
 		"Location":       post.Location,
+		"Category":       post.Category,
 		"Avatar":         post.Avatar,
 		"Cover":          post.Cover,
 		"Content":        post.Content,
@@ -514,11 +521,12 @@ func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) err
 	cells, dl, ml, ht := computeHeatmap(posts)
 
 	return ctx.writeHTML(tmpl, filepath.Join("public", "index.html"), ctx.pageData(map[string]interface{}{
-		"Title": "个人博客",
+		"Title": "Personal blog",
 		"Home": map[string]string{
-			"Title":  config.Cfg.Home.Title,
-			"Avatar": config.Cfg.Home.Avatar,
-			"Owner":  config.Cfg.Home.Owner,
+			"Title":    config.Cfg.Home.Title,
+			"Subtitle": config.Cfg.Home.SubTitle,
+			"Avatar":   config.Cfg.Home.Avatar,
+			"Owner":    config.Cfg.Home.Owner,
 		},
 		"TechPosts":        techPosts,
 		"LiteTechPosts":    liteTechPosts,
@@ -582,7 +590,7 @@ func (ctx *buildContext) renderArticles(tmpl *template.Template, posts []*Post) 
 		}
 
 		if err := ctx.writeHTML(tmpl, outPath, ctx.pageData(map[string]interface{}{
-			"Title":        "文章",
+			"Title":        "Articles",
 			"Posts":        posts[start:end],
 			"Page":         page,
 			"TotalPages":   totalPages,
@@ -637,10 +645,62 @@ func (ctx *buildContext) renderAboutPage(tmpl *template.Template, out, src, lang
 	}))
 }
 
+// friendLink is one entry of content/friends/friends.md.
+type friendLink struct {
+	Nick string
+	URL  string
+	Host string
+}
+
+// A friends entry is a bullet of the form "- Nick: [label](https://host/)".
+// The nick is whatever precedes the first colon — which is why the colon is
+// consumed here instead of being handed to the page: in a two-column row a
+// dangling "nick:" reads like a label, not like a name.
+var friendLinkRe = regexp.MustCompile(`^\s{0,3}[-*+]\s+(.+?)\s*[:：]\s*\[[^\]]*\]\(\s*(\S+?)\s*\)\s*$`)
+
+// parseFriendLinks splits the friends markdown into structured entries and
+// returns everything that was not a link bullet, so prose on the same page
+// still renders.
+func parseFriendLinks(body string) ([]friendLink, string) {
+	var (
+		links []friendLink
+		rest  []string
+	)
+	for _, line := range strings.Split(body, "\n") {
+		m := friendLinkRe.FindStringSubmatch(line)
+		if m == nil {
+			rest = append(rest, line)
+			continue
+		}
+		target := m[2]
+		parsed, err := url.Parse(target)
+		if err != nil || parsed.Host == "" || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+			rest = append(rest, line)
+			continue
+		}
+		nick := strings.TrimSpace(m[1])
+		if nick == "" {
+			nick = parsed.Host
+		}
+		links = append(links, friendLink{Nick: nick, URL: target, Host: parsed.Host})
+	}
+	return links, strings.TrimSpace(strings.Join(rest, "\n"))
+}
+
 func (ctx *buildContext) renderFriends() error {
 	fm, rendered, err := renderMarkdownPage("content/friends/friends.md", "Friends")
 	if err != nil {
 		return err
+	}
+
+	friends, rest := parseFriendLinks(rendered.body)
+	note := ""
+	if friends != nil && rest != "" {
+		rem, err := renderMarkdown(rest)
+		if err != nil {
+			return err
+		}
+		note = rem.html
 	}
 
 	tmpl, err := ctx.cloneTmpl()
@@ -656,6 +716,8 @@ func (ctx *buildContext) renderFriends() error {
 		"CanonicalURL": canonicalURL,
 		"Title":        fm.Title,
 		"Content":      template.HTML(rendered.html),
+		"Friends":      friends,
+		"Note":         template.HTML(note),
 		"Nav":          navFriends,
 	}))
 }
@@ -708,6 +770,7 @@ func renderMarkdownPage(path, fallbackTitle string) (*Frontmatter, renderedMarkd
 	if err != nil {
 		return nil, renderedMarkdown{}, err
 	}
+	rendered.body = body
 
 	return fm, rendered, nil
 }
@@ -756,15 +819,26 @@ func computeHeatmap(posts []*Post) (cells []heatmapCell, dayLabels []string, mon
 
 	dayLabels = []string{"", "Mon", "", "Wed", "", "Fri", ""}
 
+	// Month ticks are absolutely positioned in week columns, so two
+	// labels less than three columns apart would collide. The leading
+	// column is always a partial month and is left unlabelled.
+	lastLabel := ""
+	lastCol := -100
 	for w := 0; w < 53; w++ {
 		d := start.AddDate(0, 0, w*7)
 		m := d.Format("Jan")
-		if len(months) == 0 || months[len(months)-1].Label != m {
-			months = append(months, heatmapMonth{
-				Label: m,
-				Col:   w,
-			})
+		if m == lastLabel {
+			continue
 		}
+		lastLabel = m
+		if w == 0 || w-lastCol < 3 {
+			continue
+		}
+		months = append(months, heatmapMonth{
+			Label: m,
+			Col:   w,
+		})
+		lastCol = w
 	}
 	return
 }
@@ -1154,10 +1228,13 @@ func extractExcerpt(body string) string {
 	return ""
 }
 
-func stripTags(html string) string {
+// stripTags reduces rendered HTML to plain text. Entities are decoded
+// too: goldmark escapes `"` as `&quot;`, and an excerpt carrying raw
+// entities would show the escape sequence on the page.
+func stripTags(s string) string {
 	var buf bytes.Buffer
 	inTag := false
-	for _, r := range html {
+	for _, r := range s {
 		if r == '<' {
 			inTag = true
 		} else if r == '>' {
@@ -1168,7 +1245,7 @@ func stripTags(html string) string {
 			buf.WriteRune(r)
 		}
 	}
-	return buf.String()
+	return stdhtml.UnescapeString(buf.String())
 }
 
 func truncateText(text string, maxLen int) string {
@@ -1176,7 +1253,7 @@ func truncateText(text string, maxLen int) string {
 	if len(runes) <= maxLen {
 		return text
 	}
-	return string(runes[:maxLen]) + "...."
+	return string(runes[:maxLen]) + "…"
 }
 
 var (

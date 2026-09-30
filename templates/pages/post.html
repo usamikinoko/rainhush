@@ -2,20 +2,30 @@
 <div class="container post-container">
 <div class="post-main">
 <article class="post">
-    <h1>{{.Title}}</h1>
-    <div class="post-meta-top">
+    <h1 class="post-title">{{.Title}}</h1>
+
+    {{/* The meta strip: one .wire-frame laid on its side. The parent
+         paints the hairlines and the two cells only carry background,
+         so the rule between the facts and the counts is the same 1px
+         gap every other box on the sheet draws. Labels are chrome and
+         stay English (site convention); the values come from the
+         article's own front matter. */}}
+    <div class="post-meta-top wire-frame">
         <div class="post-meta-row">
             {{if .Author}}<span class="post-author">{{.Author}}</span>{{end}}
-            {{if .Date}}{{if .Author}}<span class="post-meta-sep">·</span>{{end}}<time class="post-date" datetime="{{.Date}}">发布于 {{.Date}}</time>{{end}}
-            {{if .UpdatedAt}}{{if or .Author .Date}}<span class="post-meta-sep">·</span>{{end}}<span class="post-updated">更新于 {{.UpdatedAt}}</span>{{end}}
-            {{if .Location}}{{if or .Author .Date .UpdatedAt}}<span class="post-meta-sep">·</span>{{end}}<span class="post-location">{{.Location}}</span>{{end}}
+            {{if .Date}}<span class="post-meta-item"><span class="post-meta-label">Published</span><time datetime="{{.Date}}">{{.Date}}</time></span>{{end}}
+            {{if .UpdatedAt}}<span class="post-meta-item"><span class="post-meta-label">Updated</span>{{.UpdatedAt}}</span>{{end}}
+            {{if .Location}}<span class="post-meta-item"><span class="post-meta-label">Location</span>{{.Location}}</span>{{end}}
         </div>
-        <div class="post-meta-row post-meta-stats">本篇文章共 {{.WordCount}} 字，预计阅读 {{.ReadingMinutes}} 分钟</div>
+        <div class="post-meta-row post-meta-stats">{{.WordCount}} words / {{.ReadingMinutes}} min read</div>
     </div>
+
     {{if .Cover}}<img class="post-cover" src="{{.Cover}}" alt="{{.Title}}" loading="lazy" decoding="async">{{end}}
+
     <div class="post-body">
         {{.Content}}
     </div>
+
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -34,14 +44,18 @@
         "mainEntityOfPage": "{{.CanonicalURL}}"
     }
     </script>
+
+    {{/* The licence. A hatched strip, like every other texture band on
+         the sheet — it closes the article with the page's own material
+         rather than with a floating line of small print. */}}
     <div class="post-license">
         <p class="post-license-text">
-            本文采用知识共享署名-非商业性使用 4.0 国际许可协议，简称 <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a> 授权。<br />
-            欢迎转载与分享，转载时请保留作者署名、注明原文出处并附上原文链接。
+            Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a> — Creative Commons Attribution-NonCommercial 4.0 International.<br />
+            Reposts and shares are welcome, as long as the author credit is kept and the original source is cited and linked.
         </p>
     </div>
 </article>
 </div>
-<aside class="post-toc" id="post-toc"></aside>
+<aside class="post-toc" id="post-toc" aria-label="Contents"></aside>
 </div>
 {{end}}
