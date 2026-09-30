@@ -12,18 +12,26 @@
 
 /* --- Fig. 1 : the hero plate ------------------------------- */
 
-/* Three slots on one line — portrait, identity, drawing. The
-   portrait and the identity read as one group (22px apart), while
-   the drawing pins to the far edge with an auto margin: the free
-   space then lives between the words and the drawing, where air is
-   welcome, instead of splitting the portrait from its name. */
+/* A calling card laid on the drafting grid, in two registers:
+   the identity row (portrait, signature, drawing) carries the
+   card's face, and the three counts sit below it as a ruled foot
+   strip — one top rule, hairlines between cells, nothing else.
+   Portrait and identity read as one group (22px apart), while the
+   drawing pins to the far edge with an auto margin: the free space
+   lives between the words and the drawing, where air is welcome. */
 .home-hero-figure {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    border: var(--wire-w) solid var(--border-light);
+}
+
+.home-hero-main {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: var(--gap-3);
     padding: 34px 30px;
-    border: var(--wire-w) solid var(--border-light);
     min-height: 200px;
 }
 
@@ -60,10 +68,10 @@
    would stop reading as pencil. The size does the title work. */
 .home-hero-title {
     font-family: var(--font-script);
-    font-size: 2.2em;
+    font-size: 2.6em;
     font-weight: 400;
     letter-spacing: 0.005em;
-    line-height: 1.25;
+    line-height: 1.2;
     color: var(--text-color);
 }
 
@@ -180,14 +188,35 @@
 
 /* --- statistics strip -------------------------------------- */
 
+/* The card's foot, ruled like the article index: one hairline
+   across the plate and single hairlines between the cells. The
+   cells stay transparent so the drafting grid runs on through —
+   the strip belongs to the same sheet of paper as the portrait
+   above it. */
 .home-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: var(--gap-3);
+    border-top: var(--wire-w) solid var(--border-light);
 }
 
 .home-stat {
     padding: var(--cell-y) var(--cell-x);
+}
+
+/* One line between neighbours, drawn once — no cell touches the
+   plate's own left and right rules. The outer cells' text sits on
+   the same 30px inset as the portrait and the drawing above, so
+   the card's face and its foot share one pair of edges. */
+.home-stat:not(:first-child) {
+    border-left: var(--wire-w) solid var(--border-light);
+}
+
+.home-stat:first-child {
+    padding-left: 30px;
+}
+
+.home-stat:last-child {
+    padding-right: 30px;
 }
 
 .home-stat dt {
@@ -378,11 +407,12 @@
    ============================================================ */
 
 @media (max-width: 768px) {
-    .home-hero-figure {
+    .home-hero-main {
         flex-direction: column;
         align-items: flex-start;
         gap: var(--gap-3);
         padding: 28px var(--pad);
+        min-height: 0;
     }
 
     .home-hero-art {
@@ -415,8 +445,20 @@
         gap: 4px;
     }
 
-    .home-stats {
-        grid-template-columns: 1fr;
+    /* The counts keep their three cells at every width — short
+       numbers and a short label each, so the card's foot reads as
+       one ruled strip on a phone too. Its outer insets follow the
+       identity row's, not the desktop 30px. */
+    .home-stat {
+        padding: var(--cell-y) 12px;
+    }
+
+    .home-stat:first-child {
+        padding-left: var(--pad);
+    }
+
+    .home-stat:last-child {
+        padding-right: var(--pad);
     }
 }
 

@@ -139,9 +139,9 @@ html {
     --bg-secondary: #2e2e2e;
     --text-color: #f7f7f7;
     --text-muted: #b6b6b6;
-    --primary-color: #029e9e;
-    --border-color: #5c5c5c;
-    --border-light: #3c3c3c;
+    --primary-color: #c76bc2;
+    --border-color: #7d7d7d;
+    --border-light: #555555;
     --code-bg: #1a1a1a;
     --card-bg: #161616;
     --footer-color: #9c9c9c;
@@ -190,9 +190,9 @@ html {
     --bg-secondary: #ededed;
     --text-color: #141414;
     --text-muted: #3a3a3a;
-    --primary-color: #049c9c;
-    --border-color: #a6a6a6;
-    --border-light: #cfcfcf;
+    --primary-color: #a448a0;
+    --border-color: #858585;
+    --border-light: #b0b0b0;
     --code-bg: #f6f6f6;
     --card-bg: #fcfcfc;
     --footer-color: #5c5c5c;
