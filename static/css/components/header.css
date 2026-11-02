@@ -236,7 +236,7 @@
     top: 100%;
     left: 0;
     right: 0;
-    background-color: var(--border-light);
+    background-color: var(--border-soft);
     border: var(--wire-w) solid var(--border-light);
     border-top: none;
     flex-direction: column;

@@ -83,9 +83,9 @@
 }
 
 .auth-submit:hover {
-    background: var(--invert-bg);
-    border-color: var(--invert-bg);
-    color: var(--invert-text);
+    background-image: var(--hatch-pattern-strong);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .auth-error {

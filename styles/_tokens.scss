@@ -65,6 +65,7 @@
     --text-muted: #b6b6b6;
     --primary-color: #c76bc2;
     --border-color: #7d7d7d;
+    --border-soft: #3d3d3d;
     --border-light: #555555;
     --code-bg: #1a1a1a;
     --card-bg: #161616;
@@ -77,8 +78,6 @@
     --hatch: rgba(255, 255, 255, 0.12);
     --hatch-strong: rgba(255, 255, 255, 0.2);
     --grid-line: rgba(255, 255, 255, 0.06);
-    --invert-bg: #f7f7f7;
-    --invert-text: #111111;
 
     /* 45° hatching, declared once as tokens so every band and every
        hover state draws the same texture. They resolve --hatch and
@@ -116,6 +115,7 @@
     --text-muted: #3a3a3a;
     --primary-color: #a448a0;
     --border-color: #858585;
+    --border-soft: #d6d6d6;
     --border-light: #b0b0b0;
     --code-bg: #f6f6f6;
     --card-bg: #fcfcfc;
@@ -128,6 +128,4 @@
     --hatch: rgba(0, 0, 0, 0.09);
     --hatch-strong: rgba(0, 0, 0, 0.14);
     --grid-line: rgba(0, 0, 0, 0.07);
-    --invert-bg: #141414;
-    --invert-text: #fafafa;
 }

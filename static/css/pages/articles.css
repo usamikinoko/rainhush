@@ -74,8 +74,10 @@
 
 /* Pagination is a control, not a list row — but it is drawn by the
    same hand as the ledger above it: one wire-frame, flush cells, no
-   inner inset. The frame's hairlines are the whole box, and the
-   current page is the one inverted cell. */
+   inner inset. The current page is a location mark, not a stamp:
+   the sheet's hatch fills the cell and the primary takes the type,
+   the same voice a hovered row speaks — the reader's eye finds
+   "where am I" without the page printing a solid block. */
 .pagination {
   flex-direction: row;
   justify-content: center;
@@ -96,7 +98,7 @@
   letter-spacing: 0.06em;
   text-decoration: none;
   color: var(--text-muted);
-  transition: color 0.15s;
+  transition: color 0.15s, background-color 0.15s;
 }
 
 .pagination a:hover {
@@ -105,8 +107,9 @@
 }
 
 .pagination .page-current {
-  background-color: var(--text-color);
-  color: var(--bg-color);
+  background-image: var(--hatch-pattern-strong);
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 .pagination .page-disabled {

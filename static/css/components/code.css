@@ -17,7 +17,9 @@
   flex-direction: column;
   gap: var(--wire-w);
   margin: var(--gap-3) 0;
-  background-color: var(--border-light);
+  /* Same two-weight frame as .wire-frame: border-light outline,
+     border-soft internal rules. */
+  background-color: var(--border-soft);
   border: var(--wire-w) solid var(--border-light);
   overflow: hidden;
 }

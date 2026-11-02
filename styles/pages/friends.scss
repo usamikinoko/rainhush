@@ -76,10 +76,15 @@
 /* Hover accent sits exactly ON the card's own edge — one 1px rule,
    the same nominal width as the frame's hairlines. A wider inset
    would stack on the neighbouring 1px gap line and read as a thick
-   double edge between two cells. */
+   double edge between two cells. The name takes the primary with
+   the arrow, so the hover reads on the text as well as the edge. */
 .friend-card:hover {
     background-image: var(--hatch-pattern-strong);
     box-shadow: inset var(--wire-w) 0 0 var(--primary-color);
+}
+
+.friend-card:hover .friend-name {
+    color: var(--primary-color);
 }
 
 .friend-card:hover::after {

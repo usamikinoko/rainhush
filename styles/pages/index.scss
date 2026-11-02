@@ -308,10 +308,12 @@
     transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
+/* One hover language site-wide: hatch fill, primary rule and type —
+   matching the ledger rows, the pager and the friend wall. */
 .home-readmore a:hover {
-    background: var(--invert-bg);
-    border-color: var(--invert-bg);
-    color: var(--invert-text);
+    background-image: var(--hatch-pattern-strong);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 /* ============================================================

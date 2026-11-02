@@ -94,7 +94,7 @@
     border-radius: 0;
     outline: none;
     background: transparent;
-    box-shadow: inset 0 0 0 var(--wire-w) var(--border-light);
+    box-shadow: inset 0 0 0 var(--wire-w) var(--border-soft);
 }
 
 .heatmap-cell:hover,
@@ -105,7 +105,7 @@
 /* ---- Levels (the only saturated colour in the system) ---- */
 .heatmap-l0 {
     background: transparent;
-    box-shadow: inset 0 0 0 var(--wire-w) var(--border-light);
+    box-shadow: inset 0 0 0 var(--wire-w) var(--border-soft);
 }
 
 .heatmap-l1,

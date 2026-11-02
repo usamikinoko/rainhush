@@ -36,6 +36,20 @@ html {
     scrollbar-gutter: stable;
 }
 
+/* Prose is there to be taken: the global user-select: none keeps
+   UI chrome from smearing a stray drag-select, but it must never
+   cage the words themselves. */
+.post-body,
+.post-title,
+.post-license-text {
+    user-select: text;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--primary-color) 32%, transparent);
+    color: var(--text-color);
+}
+
 /* Author `display` declarations beat the UA's [hidden] rule, so
    state this once instead of guarding every component. */
 [hidden] {
@@ -177,12 +191,18 @@ h4 {
    around them; the children only carry a background. This is what
    replaces the old "parent border + child border" stacking, where
    a panel and its rows each drew their own line.
+
+   The gutter and the outline are deliberately TWO weights: the
+   outline keeps --border-light, the inner rules drop to
+   --border-soft. A drawing reads outside-in — the object edge
+   first, its internal ruling second — and one weight for both is
+   what made grids like the friend wall read as wire cages.
    ------------------------------------------------------------ */
 .wire-frame {
     display: flex;
     flex-direction: column;
     gap: var(--wire-w);
-    background-color: var(--border-light);
+    background-color: var(--border-soft);
     border: var(--wire-w) solid var(--border-light);
 }
 
@@ -308,10 +328,15 @@ main > .container {
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
+/* Button hovers speak the sheet's one hover language: the hatch
+   fills the box, the rule and the words take the primary. The old
+   full-inversion hover was the only solid slab left on the site —
+   a pure-black block in the light theme that no other component
+   echoed. */
 .error-page-link:hover {
-    background: var(--invert-bg);
-    border-color: var(--invert-bg);
-    color: var(--invert-text);
+    background-image: var(--hatch-pattern-strong);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 html.theme-anim *,
