@@ -14,10 +14,7 @@
     <div class="friend-grid wire-frame">
         {{range .Friends}}{{template "c/friend-card" .}}{{end}}
     </div>
-    <div class="wire-figcap">
-        <span class="mono">Fig. 1. Friend links — in listed order</span>
-        <span class="mono">{{len .Friends}} sites · click anywhere to visit</span>
-    </div>
+    {{template "c/figcap" (dict "no" "1" "label" "Friend links — in listed order" "right" (printf "%d sites · click anywhere to visit" (len .Friends)))}}
     {{else}}
     <div class="post-body friends-body">
         {{.Content}}

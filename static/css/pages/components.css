@@ -45,3 +45,35 @@
 .sink-code {
   margin-top: var(--gap-2);
 }
+
+/* --- icons ---------------------------------------------------
+   The embedded Lucide set, one cell per glyph. The glyph renders
+   at 1em of the demo text size; the name below it is the exact
+   string the {{icon}} function expects. */
+.sink-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-1);
+}
+
+.sink-icon-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 76px;
+  padding: var(--cell-y) var(--cell-x);
+  border: var(--wire-w) solid var(--border-soft);
+}
+
+.sink-icon-glyph {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.sink-icon-name {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"rainhush/internal/config"
+	"rainhush/internal/icons"
 )
 
 // The kitchen sink (dev/components.html) renders every component in
@@ -66,6 +67,9 @@ func (ctx *buildContext) renderKitchenSink() error {
 		"Location":       sample.Location,
 		"WordCount":      sample.WordCount,
 		"ReadingMinutes": sample.ReadingMinutes,
+		// The icon set: every embedded Lucide glyph, one per row, so
+		// new or missing marks are reviewed here like everything else.
+		"IconNames": icons.Names(),
 	}
 
 	return ctx.writeHTML(tmpl, filepath.Join("public", "dev", "components.html"), ctx.pageData(data))

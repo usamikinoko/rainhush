@@ -10,10 +10,7 @@
      the sheet's hatch plus a primary inset rule; the type itself
      never changes color. */}}
 {{template "c/post-list" (dict "posts" .Posts)}}
-<div class="wire-figcap">
-    <span class="mono">Fig. 1. Article index — newest first</span>
-    <span class="mono">Source: content/posts</span>
-</div>
+{{template "c/figcap" (dict "no" "1" "label" "Article index — newest first" "right" "Source: content/posts")}}
 {{template "c/pagination" .}}
 {{else}}
 <p class="articles-empty">No articles yet.</p>

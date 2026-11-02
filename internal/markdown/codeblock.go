@@ -5,6 +5,7 @@ import (
 	stdhtml "html"
 	"strings"
 
+	"rainhush/internal/icons"
 	"rainhush/pkg/extension"
 
 	_ "rainhush/internal/markdown/components/imagelayout"
@@ -94,7 +95,9 @@ func (r *codeBlockRenderer) renderFencedCodeBlock(w util.BufWriter, source []byt
 	// The inline onclick stays for scaffold sites that still ship the
 	// legacy global copyCode(); the element defers to it when present.
 	w.WriteString(`<rain-code-copy><button class="copy-btn" type="button" onclick="copyCode(this)" aria-label="Copy code" title="Copy code">`)
-	w.WriteString(`<svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`)
+	if copyIcon, err := icons.Func()("copy", "copy-icon"); err == nil {
+		w.WriteString(string(copyIcon))
+	}
 	w.WriteString(`<span class="copy-text">Copy</span>`)
 	w.WriteString(`</button></rain-code-copy>`)
 	w.WriteString(`</div>`)

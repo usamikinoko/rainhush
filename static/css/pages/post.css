@@ -185,7 +185,9 @@
 }
 
 .post-body a {
-  color: var(--text-color);
+  /* Resting links carry a faint wash of the accent — enough to be
+     scanned as clickable without breaking the sheet's quiet grey */
+  color: color-mix(in srgb, var(--primary-color) 55%, var(--text-color));
   text-decoration: none;
   border-bottom: var(--wire-w) solid var(--border-color);
   transition: color 0.15s, border-color 0.15s;
@@ -337,7 +339,7 @@
 }
 
 .post-license-text a {
-  color: var(--text-color);
+  color: color-mix(in srgb, var(--primary-color) 55%, var(--text-color));
   text-decoration: none;
   border-bottom: var(--wire-w) solid var(--border-color);
 }

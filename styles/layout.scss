@@ -266,6 +266,27 @@ main > .container {
 /* ---- figure caption ------------------------------------------
    Sits directly under a wire-frame figure, same gutter as the
    frame's own cells so the two columns of text line up with it. */
+/* ------------------------------------------------------------
+   Icon primitive — Lucide glyphs embedded at build time and
+   stamped by the {{icon}} template function. Size is owned here
+   and nowhere else: 1em, so an icon always matches the font-size
+   of the text it annotates and scales with it.
+   ------------------------------------------------------------ */
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    vertical-align: -0.125em;
+}
+
+/* The index line of a figure — number and caption both carry the
+   sheet's one saturated annotation colour, so the whole label
+   reads as a single accent note. */
+.wire-figcap .mono:first-child {
+    color: var(--primary-color);
+}
+
 .wire-figcap {
     display: flex;
     align-items: baseline;

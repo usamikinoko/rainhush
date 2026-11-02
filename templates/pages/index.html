@@ -33,18 +33,10 @@
                          rename the header and the page metadata too —
                          see the Fig. 1 caption, same word. */}}
                     <h1 class="home-hero-title">RainHush</h1>
-                    {{/* The signature badge: who signs the sheet. One
-                         chip — a small hand-tool mark, then the name;
-                         anything beside it (a leader line, the domain)
-                         reads as a label/value pair and the plate
-                         turns into a form. */}}
-                    <p class="home-hero-byline">
-                        <svg class="home-hero-byline-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                            <path d="m15 5 4 4"/>
-                        </svg>
-                        <span>{{.Home.Owner}}</span>
-                    </p>
+                    {{/* The signature: the one handwritten voice on the
+                         hero plate, small and off the rule — it signs
+                         the sheet the way the margin note does. */}}
+                    <p class="home-hero-byline">{{.Home.Owner}}</p>
                 </div>
 
                 <div class="home-hero-art">
@@ -65,7 +57,7 @@
             {{template "c/home-stats" (dict "articles" .TotalPosts "words" .TotalWords "pastYear" .HeatmapTotal)}}
         </div>
 
-        {{template "c/figcap" (dict "left" "Fig. 1. Overview — RainHush" "right" "Built with RainHush")}}
+        {{template "c/figcap" (dict "no" "1" "label" "Overview — RainHush" "right" "Built with RainHush")}}
 
         <div class="wire-hatch" aria-hidden="true"></div>
     </section>
@@ -85,10 +77,10 @@
             {{template "c/home-posts-col" (dict "name" "Life" "posts" .LifePosts)}}
         </div>
 
-        {{template "c/figcap" (dict "left" "Fig. 2. Recent posts — filed by category" "right" "Newest first")}}
+        {{template "c/figcap" (dict "no" "2" "label" "Recent posts — filed by category" "right" "Newest first")}}
 
         <div class="home-readmore">
-            <a href="/articles.html">All articles</a>
+            <a href="/articles.html">All articles{{icon "arrow-right" "home-readmore-icon"}}</a>
         </div>
     </section>
 

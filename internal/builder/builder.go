@@ -20,6 +20,7 @@ import (
 	"unicode"
 
 	"rainhush/internal/config"
+	"rainhush/internal/icons"
 	"rainhush/internal/markdown"
 	"rainhush/pkg/extension"
 
@@ -100,6 +101,7 @@ func newBuildContext() (*buildContext, error) {
 	files := append([]string{"templates/layouts/layout.html"}, components...)
 	tmpl, err := template.New("").Funcs(template.FuncMap{
 		"dict": dict,
+		"icon": icons.Func(),
 	}).ParseFiles(files...)
 	if err != nil {
 		return nil, fmt.Errorf("parse shared templates: %w", err)

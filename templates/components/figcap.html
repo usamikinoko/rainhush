@@ -1,4 +1,4 @@
 {{define "c/figcap"}}<div class="wire-figcap">
-            <span class="mono">{{.left}}</span>
+            <span class="mono">{{if .no}}Fig.&nbsp;{{.no}}. {{.label}}{{else}}{{.label}}{{end}}</span>
             <span class="mono">{{.right}}</span>
         </div>{{end}}

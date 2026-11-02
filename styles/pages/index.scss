@@ -83,24 +83,14 @@
    beside it (a leader line, the domain) reads as a label/value
    pair and the plate turns into a form. */
 .home-hero-byline {
-    margin-top: var(--gap-2);
     align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 10px;
-    background-color: var(--bg-secondary);
-    border: var(--wire-w) solid var(--border-color);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    line-height: 1;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    margin: var(--gap-2) 0 0;
+    font-family: var(--font-script);
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
     color: var(--text-muted);
-}
-
-.home-hero-byline-icon {
-    flex-shrink: 0;
+    opacity: 0.9;
 }
 
 /* --- schematic figure + handwritten margin note ------------- */
@@ -256,8 +246,7 @@
     background-color: var(--bg-color);
 }
 
-/* Header band: solid fill, wide tracking, and the panel index in
-   the accent colour — the one saturated note in the block. */
+/* Header band: solid fill, wide tracking. */
 .home-posts-col-title {
     margin: 0;
     padding: var(--cell-y) var(--cell-x);
@@ -314,6 +303,16 @@
     background-image: var(--hatch-pattern-strong);
     border-color: var(--primary-color);
     color: var(--primary-color);
+}
+
+.home-readmore-icon {
+    margin-left: 6px;
+    vertical-align: -0.15em;
+    transition: transform 0.15s;
+}
+
+.home-readmore a:hover .home-readmore-icon {
+    transform: translateX(3px);
 }
 
 /* ============================================================
@@ -385,6 +384,9 @@
 }
 
 .post-item-more a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     color: var(--text-muted);
     text-decoration: none;
     font-family: var(--font-mono);
@@ -394,14 +396,20 @@
     transition: color 0.15s, border-color 0.15s;
 }
 
-.post-item-more a::after {
-    content: " →";
+.post-item-more .icon {
+    color: var(--text-muted);
+    transition: color 0.15s, transform 0.15s;
 }
 
 /* The whole row is the hover target: the Read link answers to it */
 .post-item:hover .post-item-more a {
-    color: var(--text-color);
-    border-bottom-color: var(--border-color);
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.post-item:hover .post-item-more .icon {
+    color: var(--primary-color);
+    transform: translateX(2px);
 }
 
 /* ============================================================

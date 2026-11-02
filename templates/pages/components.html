@@ -40,7 +40,7 @@
 
     <section class="sink-section">
         <h2 class="sink-title">c/figcap</h2>
-        {{template "c/figcap" (dict "left" "Fig. 0. Component sink — sample data" "right" "Not indexed")}}
+        {{template "c/figcap" (dict "no" "0" "label" "Component sink — sample data" "right" "Not indexed")}}
     </section>
 
     <section class="sink-section">
@@ -63,6 +63,15 @@
     <section class="sink-section">
         <h2 class="sink-title">code-block (markdown → rain-code-copy)</h2>
         <div class="post-body sink-code">{{.CodeDemo}}</div>
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">icons (internal/icons · Lucide · 1em)</h2>
+        <div class="sink-icons">
+            {{range .IconNames}}
+            <span class="sink-icon-cell"><span class="sink-icon-glyph">{{icon .}}</span><span class="sink-icon-name">{{.}}</span></span>
+            {{end}}
+        </div>
     </section>
 </div>
 {{end}}
