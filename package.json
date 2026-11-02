@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "rainhush",
   "version": "0.1.7",
   "description": "Rainhush - Fast static site generator built with Go. Markdown to HTML with syntax highlighting, Mermaid support, and deployment tooling.",
@@ -11,6 +11,8 @@
   "author": "Hypokinoko",
   "scripts": {
     "prepack": "node scripts/prepack.mjs",
+    "styles": "node scripts/build-styles.mjs",
+    "styles:check": "node scripts/build-styles.mjs --check",
     "subset-font": "node scripts/subset-hand-font.mjs",
     "test": "go test ./..."
   },
@@ -27,5 +29,10 @@
   "files": [
     "rainhush.exe"
   ],
-  "os": ["win32"]
+  "os": [
+    "win32"
+  ],
+  "devDependencies": {
+    "sass": "^1.107.1"
+  }
 }

@@ -1,0 +1,15 @@
+{{define "c/post-meta"}}{{/* The meta strip: one .wire-frame laid on its side. The parent
+     paints the hairlines and the two cells only carry background,
+     so the rule between the facts and the counts is the same 1px
+     gap every other box on the sheet draws. Labels are chrome and
+     stay English (site convention); the values come from the
+     article's own front matter. Fields read straight from the page
+     data, so a post page can call this with `.` unchanged. */}}<div class="post-meta-top wire-frame">
+        <div class="post-meta-row">
+            {{if .Author}}<span class="post-author">{{.Author}}</span>{{end}}
+            {{if .Date}}<span class="post-meta-item"><span class="post-meta-label">Published</span><time datetime="{{.Date}}">{{.Date}}</time></span>{{end}}
+            {{if .UpdatedAt}}<span class="post-meta-item"><span class="post-meta-label">Updated</span>{{.UpdatedAt}}</span>{{end}}
+            {{if .Location}}<span class="post-meta-item"><span class="post-meta-label">Location</span>{{.Location}}</span>{{end}}
+        </div>
+        <div class="post-meta-row post-meta-stats">{{.WordCount}} words / {{.ReadingMinutes}} min read</div>
+    </div>{{end}}

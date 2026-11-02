@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 
 	_ "rainhush/extensions"
 	"rainhush/internal/builder"
@@ -70,6 +73,11 @@ func main() {
 
 		stopWatcher, err := watcher.Watch(func(name string) {
 			fmt.Printf("Change detected: %s\n", name)
+			if strings.HasPrefix(filepath.ToSlash(name), "styles/") {
+				if err := buildStyles(); err != nil {
+					fmt.Fprintf(os.Stderr, "Styles build failed: %v\n", err)
+				}
+			}
 			if err := builder.Build(); err != nil {
 				fmt.Fprintf(os.Stderr, "Rebuild failed: %v\n", err)
 			} else {
@@ -101,6 +109,16 @@ func main() {
 		printUsage()
 		os.Exit(1)
 	}
+}
+
+// buildStyles recompiles the Sass sources in styles/ into static/css/
+// before a rebuild triggered by a style change. Requires Node (the sass
+// devDependency); the build degrades to the last compiled CSS on failure.
+func buildStyles() error {
+	cmd := exec.Command("node", "scripts/build-styles.mjs")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func printUsage() {

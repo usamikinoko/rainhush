@@ -1,0 +1,68 @@
+{{define "content"}}
+{{/* Kitchen sink for the component library. Every demo pulls the same
+     templates/components/ definitions the real pages use, with sample
+     data built in internal/builder (renderKitchenSink). Header and
+     footer are on the page by construction — they are components too. */}}
+<div class="container components-page">
+    <div class="articles-header">
+        <h1>{{.Title}}</h1>
+        <span class="mono">kitchen sink</span>
+    </div>
+    <p class="sink-intro post-body">The component library on one sheet — every demo below renders the real templates with sample data, so style drift shows up here first.</p>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/theme-toggle · c/rain-toggle</h2>
+        <div class="sink-row">
+            {{template "c/theme-toggle" .}}
+            {{template "c/rain-toggle" .}}
+        </div>
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/post-meta</h2>
+        {{template "c/post-meta" .}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/post-item</h2>
+        {{with .SamplePost}}{{template "c/post-item" .}}{{end}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/post-list</h2>
+        {{template "c/post-list" (dict "posts" .Posts)}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/pagination</h2>
+        {{template "c/pagination" .}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/figcap</h2>
+        {{template "c/figcap" (dict "left" "Fig. 0. Component sink — sample data" "right" "Not indexed")}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/home-stats</h2>
+        {{template "c/home-stats" (dict "articles" .SinkArticles "words" .SinkWords "pastYear" .HeatmapTotal)}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">c/friend-card</h2>
+        <div class="friend-grid wire-frame">
+            {{range .Friends}}{{template "c/friend-card" .}}{{end}}
+        </div>
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">heatmap</h2>
+        {{template "heatmap" .}}
+    </section>
+
+    <section class="sink-section">
+        <h2 class="sink-title">code-block (markdown → rain-code-copy)</h2>
+        <div class="post-body sink-code">{{.CodeDemo}}</div>
+    </section>
+</div>
+{{end}}

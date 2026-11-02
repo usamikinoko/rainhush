@@ -93,18 +93,36 @@ var md = goldmark.New(
 )
 
 func newBuildContext() (*buildContext, error) {
-	tmpl, err := template.ParseFiles(
-		"templates/layouts/layout.html",
-		"templates/components/header.html",
-		"templates/components/footer.html",
-		"templates/components/heatmap.html",
-		"templates/components/hero-iso.html",
-	)
+	components, err := filepath.Glob("templates/components/*.html")
+	if err != nil {
+		return nil, fmt.Errorf("glob component templates: %w", err)
+	}
+	files := append([]string{"templates/layouts/layout.html"}, components...)
+	tmpl, err := template.New("").Funcs(template.FuncMap{
+		"dict": dict,
+	}).ParseFiles(files...)
 	if err != nil {
 		return nil, fmt.Errorf("parse shared templates: %w", err)
 	}
 
 	return &buildContext{commonTmpl: tmpl}, nil
+}
+
+// dict builds a map from alternating key/value pairs so components can be
+// called with named arguments: {{template "c/post-card" (dict "post" .)}}.
+func dict(pairs ...any) (map[string]any, error) {
+	if len(pairs)%2 != 0 {
+		return nil, fmt.Errorf("dict: expected key/value pairs, got %d arguments", len(pairs))
+	}
+	m := make(map[string]any, len(pairs)/2)
+	for i := 0; i < len(pairs); i += 2 {
+		key, ok := pairs[i].(string)
+		if !ok {
+			return nil, fmt.Errorf("dict: key must be a string, got %T", pairs[i])
+		}
+		m[key] = pairs[i+1]
+	}
+	return m, nil
 }
 
 func (ctx *buildContext) cloneTmpl() (*template.Template, error) {
@@ -187,6 +205,9 @@ func Build() error {
 		return err
 	}
 	if err := ctx.render404(); err != nil {
+		return err
+	}
+	if err := ctx.renderKitchenSink(); err != nil {
 		return err
 	}
 	if err := renderLLMTXT(posts); err != nil {
@@ -1071,14 +1092,15 @@ var cssFiles = []string{
 	"static/css/pages/friends.css",
 	"static/css/components/heatmap.css",
 	"static/css/pages/deep.css",
+	"static/css/pages/components.css",
 }
 
 var jsFiles = []string{
 	"static/js/lifecycle.js",
-	"static/js/code.js",
+	"static/js/components/rain-code-copy.js",
+	"static/js/components/rain-toc.js",
 	"static/js/mermaid.js",
 	"static/js/header.js",
-	"static/js/toc.js",
 	"static/js/rain.js",
 	"static/js/navigation.js",
 }

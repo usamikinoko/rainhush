@@ -1,0 +1,177 @@
+.extension-error {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border: var(--wire-w) solid var(--border-color);
+    background-image: var(--hatch-pattern);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   Code blocks
+   ============================================================ */
+
+.code-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wire-w);
+    margin: var(--gap-3) 0;
+    background-color: var(--border-light);
+    border: var(--wire-w) solid var(--border-light);
+    overflow: hidden;
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--cell-x);
+    height: 36px;
+    background-color: var(--bg-secondary);
+    user-select: none;
+}
+
+.code-block-header-left {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.code-block-lang {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.code-block-header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* rain-code-copy wraps the copy button; contents keeps the native
+   <button> as the flex child of .code-block-header-right. */
+rain-code-copy {
+    display: contents;
+}
+
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: transparent;
+    border: var(--wire-w) solid var(--border-light);
+    cursor: pointer;
+    line-height: 1.6;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.copy-btn:hover {
+    background: var(--btn-hover-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.copy-btn:active {
+    background: var(--btn-bg);
+}
+
+.copy-btn.copied {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: transparent;
+}
+
+.copy-btn.copied .copy-icon {
+    stroke: var(--primary-color);
+}
+
+.copy-icon {
+    flex-shrink: 0;
+    stroke: currentColor;
+    transition: stroke 0.15s;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: var(--cell-x);
+    background-color: var(--code-bg);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.code-block pre::-webkit-scrollbar {
+    height: 6px;
+}
+
+.code-block pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-block pre::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 0;
+}
+
+.code-block pre::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.code-block pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    /* one notch up from the body, so code does not shrink with it */
+    font-size: 0.92em;
+    line-height: 1.65;
+    font-family: var(--font-mono);
+    color: var(--text-color);
+}
+
+pre.mermaid {
+    margin: var(--gap-3) 0;
+    padding: var(--gap-3);
+    border: var(--wire-w) solid var(--border-light);
+    background: var(--card-bg);
+    overflow-x: auto;
+    text-align: center;
+}
+
+pre.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 480px) {
+    .code-block-header {
+        height: auto;
+        padding: 10px 12px;
+        gap: 10px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .code-block-header-right {
+        width: 100%;
+    }
+
+    .copy-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .code-block pre {
+        padding: 14px;
+    }
+}

@@ -1,34 +1,34 @@
-﻿/* ============================================================
-   Chroma syntax theme — fully desaturated.
-   Hue is replaced by font-weight / font-style so tokens stay
-   distinguishable in a monochrome wireframe palette.
-   The block background comes from --code-bg; only the token
-   colours live here.
-   ============================================================ */
+/* ============================================================
+  Chroma syntax theme — fully desaturated.
+  Hue is replaced by font-weight / font-style so tokens stay
+  distinguishable in a monochrome wireframe palette.
+  The block background comes from --code-bg; only the token
+  colours live here.
+  ============================================================ */
 :root {
-    --ch-text: #eaeaea;
-    --ch-comment: #6e6e6e;
-    --ch-keyword: #cfcfcf;
-    --ch-name: #d6d6d6;
-    --ch-string: #9e9e9e;
-    --ch-number: #c8c8c8;
-    --ch-operator: #8a8a8a;
-    --ch-punctuation: #b4b4b4;
-    --ch-type: #d0d0d0;
-    --ch-builtin: #c0c0c0;
+  --ch-text: #eaeaea;
+  --ch-comment: #6e6e6e;
+  --ch-keyword: #cfcfcf;
+  --ch-name: #d6d6d6;
+  --ch-string: #9e9e9e;
+  --ch-number: #c8c8c8;
+  --ch-operator: #8a8a8a;
+  --ch-punctuation: #b4b4b4;
+  --ch-type: #d0d0d0;
+  --ch-builtin: #c0c0c0;
 }
 
-[data-theme="light"] {
-    --ch-text: #1b1b1b;
-    --ch-comment: #9a9a9a;
-    --ch-keyword: #3a3a3a;
-    --ch-name: #262626;
-    --ch-string: #6b6b6b;
-    --ch-number: #4a4a4a;
-    --ch-operator: #858585;
-    --ch-punctuation: #4a4a4a;
-    --ch-type: #3d3d3d;
-    --ch-builtin: #565656;
+[data-theme=light] {
+  --ch-text: #1b1b1b;
+  --ch-comment: #9a9a9a;
+  --ch-keyword: #3a3a3a;
+  --ch-name: #262626;
+  --ch-string: #6b6b6b;
+  --ch-number: #4a4a4a;
+  --ch-operator: #858585;
+  --ch-punctuation: #4a4a4a;
+  --ch-type: #3d3d3d;
+  --ch-builtin: #565656;
 }
 
 .code-block .c,
@@ -36,8 +36,8 @@
 .code-block .cm,
 .code-block .cp,
 .code-block .cpf {
-    color: var(--ch-comment);
-    font-style: italic;
+  color: var(--ch-comment);
+  font-style: italic;
 }
 
 .code-block .k,
@@ -47,8 +47,8 @@
 .code-block .kp,
 .code-block .kr,
 .code-block .kt {
-    color: var(--ch-keyword);
-    font-weight: 600;
+  color: var(--ch-keyword);
+  font-weight: 600;
 }
 
 .code-block .na,
@@ -59,7 +59,7 @@
 .code-block .ne,
 .code-block .nf,
 .code-block .nl {
-    color: var(--ch-name);
+  color: var(--ch-name);
 }
 
 .code-block .s,
@@ -72,7 +72,7 @@
 .code-block .sh,
 .code-block .si,
 .code-block .sx {
-    color: var(--ch-string);
+  color: var(--ch-string);
 }
 
 .code-block .m,
@@ -81,45 +81,45 @@
 .code-block .mh,
 .code-block .mi,
 .code-block .mo {
-    color: var(--ch-number);
+  color: var(--ch-number);
 }
 
 .code-block .o,
 .code-block .ow {
-    color: var(--ch-operator);
+  color: var(--ch-operator);
 }
 
 .code-block .p {
-    color: var(--ch-punctuation);
+  color: var(--ch-punctuation);
 }
 
 .code-block .n {
-    color: var(--ch-text);
+  color: var(--ch-text);
 }
 
 .code-block .nb,
 .code-block .bp {
-    color: var(--ch-builtin);
-    font-style: italic;
+  color: var(--ch-builtin);
+  font-style: italic;
 }
 
 .code-block .nv,
 .code-block .vc,
 .code-block .vg,
 .code-block .vi {
-    color: var(--ch-text);
+  color: var(--ch-text);
 }
 
 .code-block .nt {
-    color: var(--ch-type);
+  color: var(--ch-type);
 }
 
 .code-block .nn {
-    color: var(--ch-text);
+  color: var(--ch-text);
 }
 
 .code-block .err {
-    color: var(--ch-text);
-    background-color: transparent;
-    border-bottom: 1px dashed var(--ch-keyword);
+  color: var(--ch-text);
+  background-color: transparent;
+  border-bottom: 1px dashed var(--ch-keyword);
 }

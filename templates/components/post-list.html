@@ -1,0 +1,12 @@
+{{define "c/post-list"}}<div class="post-list wire-frame">
+    <div class="post-list-head" aria-hidden="true">
+        <span>Title</span>
+        <span>Date</span>
+    </div>
+    {{range .posts}}
+    <article class="post-list-item">
+        <a href="/articles/{{.Filename}}/">{{.Title}}</a>
+        {{if .Date}}<time datetime="{{.Date}}">{{.Date}}</time>{{end}}
+    </article>
+    {{end}}
+</div>{{end}}

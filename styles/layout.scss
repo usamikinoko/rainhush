@@ -1,0 +1,481 @@
+@use "tokens";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+    user-select: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+html {
+    overflow-y: overlay;
+    scrollbar-gutter: stable;
+}
+
+/* Author `display` declarations beat the UA's [hidden] rule, so
+   state this once instead of guarding every component. */
+[hidden] {
+    display: none !important;
+}
+
+/* ============================================================
+   Webface — the handwritten voice on the sheet
+
+   A brush face, self-hosted, shipped as a ~2 KB subset holding only
+   the Chinese the sheet actually draws. A font file smaller than the
+   favicon is the whole point: a full CJK face would be a few
+   megabytes to render a few characters.
+
+   Latin does NOT come from here. The Latin half of the handwritten
+   voice is whatever script hand the visitor already owns (see
+   --font-script) — a thin, monoline cursive that reads as pencil on
+   a drawing, and the lighter of the two. The brush face is only for
+   Chinese, which is why `unicode-range` pins it to CJK: a Latin word
+   would otherwise be set in the heavy brush stroke and out-weigh the
+   note beside it.
+
+   Rebuild it with `npm run subset-font` (see scripts/subset-hand-font.mjs).
+   ============================================================ */
+@font-face {
+    font-family: "Ma Shan Zheng";
+    font-style: normal;
+    /* One weight serving a 700 request. Declaring the *range* is what
+       keeps the browser from faking the bold: a double-struck brush
+       face is exactly the kind of smear that ruins it at title size. */
+    font-weight: 400 700;
+    font-display: swap;
+    /* Chinese only, and only the ranges the subset can hold. Anything
+       outside them — every Latin glyph included — falls straight
+       through to the next family in --font-script, so the two scripts
+       never mix within one word. */
+    unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF01-FF60;
+    src: url("/static/fonts/ma-shan-zheng.woff2") format("woff2");
+}
+:focus-visible {
+    outline: var(--wire-w) solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ============================================================
+   Wireframe primitives
+   ============================================================ */
+
+/* Monospaced overline label — figure numbers, meta, table heads.
+   Tabular figures so dates and counts line up column-wise. */
+.mono {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+/* Handwritten annotation text — kept as the one soft, human voice
+   on an otherwise strictly ruled page. */
+.script {
+    font-family: var(--font-script);
+    font-size: 1.22rem;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+/* One weight and leading for every heading on the sheet, so each
+   component only has to pick a size. 600 rather than 700: a bold
+   CJK face at 700 closes up the counters at these sizes. */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+/* 45° hatching, used for separator bands and as hover feedback */
+.wire-hatch {
+    height: 26px;
+    margin-top: var(--gap-3);
+    border-top: var(--wire-w) solid var(--border-light);
+    border-bottom: var(--wire-w) solid var(--border-light);
+    background-image: var(--hatch-pattern);
+    margin-inline: calc(var(--pad, 20px) * -1);
+}
+
+/* Drafting-paper coordinate grid */
+.wire-grid-bg {
+    background-image: var(--grid-pattern);
+    background-size: 26px 26px;
+}
+
+/* Registration crosshair, positioned by modifier */
+.wire-mark {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.wire-mark::before,
+.wire-mark::after {
+    content: "";
+    position: absolute;
+    background: var(--border-color);
+}
+
+.wire-mark::before {
+    left: 50%;
+    top: 0;
+    width: var(--wire-w);
+    height: 100%;
+    transform: translateX(-50%);
+}
+
+.wire-mark::after {
+    top: 50%;
+    left: 0;
+    height: var(--wire-w);
+    width: 100%;
+    transform: translateY(-50%);
+}
+
+.wire-mark--tl { top: -6px; left: -6px; }
+.wire-mark--tr { top: -6px; right: -6px; }
+.wire-mark--bl { bottom: -6px; left: -6px; }
+.wire-mark--br { bottom: -6px; right: -6px; }
+
+/* ------------------------------------------------------------
+   Hairline frame — every rule is drawn exactly once, by the
+   parent. The frame paints a 1px gutter between its children and
+   around them; the children only carry a background. This is what
+   replaces the old "parent border + child border" stacking, where
+   a panel and its rows each drew their own line.
+   ------------------------------------------------------------ */
+.wire-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wire-w);
+    background-color: var(--border-light);
+    border: var(--wire-w) solid var(--border-light);
+}
+
+:where(.wire-frame) > * {
+    min-width: 0;
+    background-color: var(--bg-color);
+}
+
+#rain-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#rain-canvas.rain-on {
+    opacity: 1;
+}
+
+body {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    color: var(--text-color);
+    background: var(--bg-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* The page frame: every top-level container carries the two
+   continuous vertical rules that give the drawing its outer box. */
+main > .container {
+    flex: 1;
+    border-left: var(--wire-w) solid var(--border-light);
+    border-right: var(--wire-w) solid var(--border-light);
+}
+
+.container {
+    max-width: var(--frame-w);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--pad-top) var(--pad) var(--pad-bottom);
+}
+
+/* ---- figure caption ------------------------------------------
+   Sits directly under a wire-frame figure, same gutter as the
+   frame's own cells so the two columns of text line up with it. */
+.wire-figcap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-2);
+    flex-wrap: wrap;
+    margin-top: var(--gap-2);
+}
+
+.wire-figcap > :last-child {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .container {
+        --pad: 16px;
+        --pad-top: 20px;
+        --pad-bottom: 36px;
+        padding: var(--pad-top) var(--pad) var(--pad-bottom);
+    }
+}
+
+/* Long-form pages opt into the wider reading inset. Declared after the
+   breakpoint above, whose `padding` shorthand would otherwise reset the
+   horizontal insets back to --pad. */
+.container--read {
+    padding-inline: var(--pad-read);
+}
+
+.error-page {
+    text-align: center;
+    padding: 64px 24px;
+    border: var(--wire-w) solid var(--border-light);
+}
+
+.error-page h1 {
+    font-family: var(--font-mono);
+    font-size: 3.4em;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--text-color);
+}
+
+.error-page p {
+    margin-top: 10px;
+    color: var(--text-muted);
+}
+
+.error-page-link {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 8px 22px;
+    border: var(--wire-w) solid var(--border-color);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.error-page-link:hover {
+    background: var(--invert-bg);
+    border-color: var(--invert-bg);
+    color: var(--invert-text);
+}
+
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+    transition:
+        background-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        fill 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+        stroke 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) !important;
+}
+
+/* ---- footer ---------------------------------------------------
+   The footer closes the drawing, so it gets the same treatment as
+   any other framed block: room enough to breathe on both sides of
+   its content. The vertical inset is deliberately the widest gap in
+   the scale — it is the last thing on the page and it should not
+   look pressed against the end of the frame. The rule above it is
+   the container's own bottom padding (--pad-bottom), so the two
+   insets add up rather than fight.
+   --------------------------------------------------------------- */
+footer {
+    width: 100%;
+    border-top: var(--wire-w) solid var(--border-light);
+    position: relative;
+    z-index: 1;
+    /* Plain ground: the footer closes the sheet, and a quiet solid
+       surface reads calmer than a texture would at the very end of
+       the page. The single rule above is the only ornament. */
+    background-color: var(--bg-color);
+}
+
+.footer-inner {
+    max-width: var(--frame-w);
+    margin: 0 auto;
+    padding: var(--gap-4) var(--pad);
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: var(--gap-4);
+    color: var(--footer-color);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    line-height: 1.9;
+    border-left: var(--wire-w) solid var(--border-light);
+    border-right: var(--wire-w) solid var(--border-light);
+}
+
+.footer-copy {
+    margin: 0;
+}
+
+.footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.footer-info p {
+    margin: 0;
+}
+
+/* The link column is its own block behind a full-height rule, so it
+   needs the same air the text column got: a hairline-height gap
+   would read as a single paragraph of two lines. */
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap-1);
+}
+
+.footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--footer-color);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.15s;
+}
+
+.footer-link:hover {
+    color: var(--primary-color);
+}
+
+.footer-link-icon {
+    flex-shrink: 0;
+}
+
+.footer-brand-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: var(--wire-w) dashed var(--border-color);
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.footer-brand-link:hover {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+.site-body main {
+    animation: page-enter 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+main.page-leaving {
+    animation: page-exit 0.18s ease-in forwards;
+}
+
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes page-exit {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.35s;
+}
+
+@media (max-width: 480px) {
+    .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--gap-3);
+        padding-block: var(--gap-3);
+        text-align: left;
+    }
+
+    /* Stacked on the same plain ground; the column keeps the full
+       width so the two blocks read as one quiet footer. */
+    .footer-links {
+        width: 100%;
+    }
+}

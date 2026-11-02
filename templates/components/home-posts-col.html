@@ -1,0 +1,11 @@
+{{define "c/home-posts-col"}}<section class="home-posts-col">
+                <h2 class="home-posts-col-title">
+                    <span class="home-posts-col-name">{{.name}}</span>
+                </h2>
+                <div class="home-posts-col-body wire-grid-bg">
+                    {{range .posts}}
+                    {{template "c/post-item" .}}
+                    {{end}}
+                    {{if not .posts}}<p class="home-posts-col-empty">/ nothing here yet</p>{{end}}
+                </div>
+            </section>{{end}}

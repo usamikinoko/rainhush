@@ -1,0 +1,34 @@
+/* ============================================================
+   Tools — Sass mixins shared by the component library
+   ============================================================ */
+
+/* Site breakpoints. The narrow breakpoint (480px) is the true
+   phone width — rules inside it must be verified at ≤512px
+   (see wire-shots/narrow.py), headless Chrome clamps above it. */
+$breakpoint-desktop: 768px;
+$breakpoint-narrow: 480px;
+$breakpoint-toc: 640px;
+
+@mixin below($width) {
+    @media (max-width: $width) {
+        @content;
+    }
+}
+
+/* The .wire-frame primitive, kept here so the rule stays written
+   once: the PARENT paints the hairlines (background on a gap of
+   --wire-w), children only carry their own background. Never add
+   a border on top of it — that is the double-rule regression. */
+@mixin wire-frame($gap: var(--wire-w)) {
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+    background-color: var(--border-light);
+}
+
+/* One padding owner per axis: a component owns its inline padding
+   OR the page container does, never both. Use this mixin when a
+   component takes ownership so the intent is greppable. */
+@mixin pad-owner($inline: var(--pad)) {
+    padding-inline: $inline;
+}

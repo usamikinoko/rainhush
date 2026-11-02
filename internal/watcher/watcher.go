@@ -10,7 +10,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-var watchedDirs = []string{"content", "templates", "static"}
+var watchedDirs = []string{"content", "templates", "static", "styles"}
 
 const debounceDelay = 150 * time.Millisecond
 

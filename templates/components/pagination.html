@@ -1,0 +1,7 @@
+{{define "c/pagination"}}<nav class="pagination wire-frame" aria-label="Pagination">
+    {{if .HasPrev}}<a href="{{.PrevURL}}">Prev</a>{{else}}<span class="page-disabled">Prev</span>{{end}}
+    {{range .PageItems}}
+    {{if .Current}}<span class="page-current">{{.Number}}</span>{{else}}<a href="{{.URL}}">{{.Number}}</a>{{end}}
+    {{end}}
+    {{if .HasNext}}<a href="{{.NextURL}}">Next</a>{{else}}<span class="page-disabled">Next</span>{{end}}
+</nav>{{end}}

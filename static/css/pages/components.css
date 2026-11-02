@@ -1,0 +1,47 @@
+/* Kitchen sink — the component library's own page (dev/components.html).
+   Only chrome for the demo sections lives here; every demoed component
+   keeps its own file as the single owner of its styles. */
+.components-page {
+  max-width: var(--frame-w);
+  margin-inline: auto;
+}
+
+.sink-intro {
+  margin-top: var(--gap-2);
+  color: var(--text-muted);
+}
+
+.sink-section {
+  margin-top: var(--gap-4);
+}
+
+.sink-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-2);
+  margin: 0 0 var(--gap-2);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.sink-title::before {
+  content: "";
+  width: 18px;
+  border-top: var(--wire-w) solid var(--border-color);
+  align-self: center;
+}
+
+.sink-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+}
+
+.sink-code {
+  margin-top: var(--gap-2);
+}

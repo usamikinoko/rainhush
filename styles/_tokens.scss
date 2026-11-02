@@ -1,0 +1,133 @@
+/* ============================================================
+   Design tokens — wireframe / technical-drawing theme
+   All neutrals are fully desaturated (HSL saturation = 0).
+   --primary-color is the ONLY saturated colour in the system.
+   Hex values were derived with Rec.709 luma from the previous
+   tinted palette, e.g. #101114 -> #111111, #282a2d -> #2a2a2a.
+
+   Contrast pass: the two surfaces (--bg-color) are fixed; every
+   *white* on dark, and every *black/grey* on light, was pushed
+   further from its surface so the hairlines and the text carry.
+   Affected: text-color, text-muted, border-color, border-light,
+   footer-color, blockquote-color, --hatch, --grid-line.
+   ============================================================ */
+:root {
+    --font-sans:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    --font-mono:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    /* The handwritten voice. Two scripts, two hands, on purpose: the
+       brush face above sets any Chinese, and the Latin always lands on
+       the system cursive — a thin monoline hand that matches the
+       hairlines of the drawing. The subset carries no Latin, so the
+       English title, the signature and the margin note are all set by
+       that one cursive and read as a single lighter hand. */
+    --font-script:
+        "Ma Shan Zheng", "华文行楷", "STXingkai", "方正舒体", "FZShuTi",
+        "Segoe Script", "Bradley Hand", "Snell Roundhand", "Apple Chancery",
+        "Brush Script MT", cursive;
+
+    --frame-w: 1080px;
+    --wire-w: 1px;
+
+    /* ---- Spacing scale --------------------------------------
+       One rhythm for every padding and margin on the site, so the
+       two sides of a block always measure the same.
+       --pad      : page frame inset (left = right by construction)
+       --pad-read : the wider inset used by long-form pages — a full
+                    column of prose wants more air at the edges than a
+                    list or a grid does
+       --pad-toc  : the tighter inset used by the article sidebar — a
+                    navigation rail reads better when it hugs its own
+                    rules instead of echoing the page inset
+       --gap-*    : distance between stacked blocks
+       --cell-*   : padding inside a table / list cell
+       ---------------------------------------------------------- */
+    --pad: 20px;
+    --pad-read: 28px;
+    --pad-toc: 14px;
+    --pad-top: 26px;
+    /* the bottom inset is deliberately larger: it has to balance
+       the sticky header sitting directly above the frame */
+    --pad-bottom: 40px;
+    --gap-1: 8px;
+    --gap-2: 14px;
+    --gap-3: 22px;
+    --gap-4: 34px;
+    --cell-x: 16px;
+    --cell-y: 12px;
+
+    --bg-color: #111111;
+    --bg-secondary: #2e2e2e;
+    --text-color: #f7f7f7;
+    --text-muted: #b6b6b6;
+    --primary-color: #c76bc2;
+    --border-color: #7d7d7d;
+    --border-light: #555555;
+    --code-bg: #1a1a1a;
+    --card-bg: #161616;
+    --footer-color: #9c9c9c;
+    --btn-bg: #1c1c1c;
+    --btn-hover-bg: #2e2e2e;
+    --rain-color: 235, 235, 235;
+    --blockquote-color: #b6b6b6;
+
+    --hatch: rgba(255, 255, 255, 0.12);
+    --hatch-strong: rgba(255, 255, 255, 0.2);
+    --grid-line: rgba(255, 255, 255, 0.06);
+    --invert-bg: #f7f7f7;
+    --invert-text: #111111;
+
+    /* 45° hatching, declared once as tokens so every band and every
+       hover state draws the same texture. They resolve --hatch and
+       --wire-w per element, so the light theme only overrides those. */
+    --hatch-pattern: repeating-linear-gradient(
+        45deg,
+        var(--hatch) 0 var(--wire-w),
+        transparent var(--wire-w) 7px
+    );
+    --hatch-pattern-strong: repeating-linear-gradient(
+        45deg,
+        var(--hatch-strong) 0 var(--wire-w),
+        transparent var(--wire-w) 7px
+    );
+    --grid-pattern:
+        linear-gradient(var(--grid-line) var(--wire-w), transparent var(--wire-w)),
+        linear-gradient(90deg, var(--grid-line) var(--wire-w), transparent var(--wire-w));
+
+    /* The three faces of a hero cube. The two sides keep the exact
+       weights the old translucent fills used — 17% and 7% of the
+       way from the paper to the text colour — but they are opaque
+       now: the hero drawing is nine cubes deep, and a cube has to be
+       able to hide the one behind it. The top is the surface the
+       hatch is drawn on. Derived, so they resolve in both themes
+       from one declaration. */
+    --cube-top: var(--card-bg);
+    --cube-left: color-mix(in srgb, var(--text-muted) 17%, var(--bg-color));
+    --cube-right: color-mix(in srgb, var(--text-muted) 7%, var(--bg-color));
+}
+
+[data-theme="light"] {
+    --bg-color: #fafafa;
+    --bg-secondary: #ededed;
+    --text-color: #141414;
+    --text-muted: #3a3a3a;
+    --primary-color: #a448a0;
+    --border-color: #858585;
+    --border-light: #b0b0b0;
+    --code-bg: #f6f6f6;
+    --card-bg: #fcfcfc;
+    --footer-color: #5c5c5c;
+    --btn-bg: #ededed;
+    --btn-hover-bg: #e0e0e0;
+    --rain-color: 54, 54, 54;
+    --blockquote-color: #2e2e2e;
+
+    --hatch: rgba(0, 0, 0, 0.09);
+    --hatch-strong: rgba(0, 0, 0, 0.14);
+    --grid-line: rgba(0, 0, 0, 0.07);
+    --invert-bg: #141414;
+    --invert-text: #fafafa;
+}
