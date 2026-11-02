@@ -561,8 +561,10 @@ func (ctx *buildContext) renderIndex(tmpl *template.Template, posts []*Post) err
 		"HeatmapCells":     cells,
 		"HeatmapDayLabels": dl,
 		"HeatmapMonths":    ml,
-		"HeatmapTotal":     ht,
-		"CanonicalURL":     strings.TrimRight(config.Cfg.Site.URL, "/") + "/",
+		/* Still rendered by the heatmap's own figcap
+		   ("N posts in the past year"), just no longer a stat. */
+		"HeatmapTotal": ht,
+		"CanonicalURL": strings.TrimRight(config.Cfg.Site.URL, "/") + "/",
 	}))
 }
 

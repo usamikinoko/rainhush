@@ -8,6 +8,39 @@
   var fetchTimeout = 8000;
   var exitDuration = 180;
 
+  /* Scroll ownership. The browser's own history-scroll restoration is
+     switched off: it snaps the viewport at popstate time, while the
+     old page is still on screen. The router remembers where the
+     reader left each page instead, and restores — invisibly, while
+     the faded sheet is still up — between the exit animation and the
+     content swap. sessionStorage backs this up across full reloads. */
+  var scrollMemory = {};
+  var lastHref = location.href;
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+  function rememberScroll() {
+    /* Keyed by the page being LEFT. location is already the target
+       when popstate fires, so the router tracks the previous URL
+       itself instead of reading location here. */
+    scrollMemory[pageKey(new URL(lastHref))] = window.scrollY || 0;
+    var keys = Object.keys(scrollMemory);
+    if (keys.length > 40) delete scrollMemory[keys[0]];
+  }
+
+  function restoreScroll(key) {
+    var saved = scrollMemory[key];
+    if (typeof saved !== "number") {
+      try { saved = +sessionStorage.getItem("scroll:" + key) || 0; } catch (e) { saved = 0; }
+    }
+    window.scrollTo(0, saved || 0);
+  }
+
+  window.addEventListener("pagehide", function () {
+    try {
+      sessionStorage.setItem("scroll:" + pageKey(new URL(location.href)), String(window.scrollY || 0));
+    } catch (e) {}
+  });
+
   function isNavigable(link, event) {
     if (!link || (link.target && link.target !== "_self") || link.hasAttribute("download")) return false;
     if (event && (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return false;
@@ -141,7 +174,10 @@
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var main = document.querySelector("main");
     if (main) main.setAttribute("aria-busy", "true");
-    if (!url.hash) window.scrollTo(0, 0);
+    rememberScroll();
+    /* Scroll memory is keyed by the page URL itself, not the
+       .frag.html fetch key — the two namespaces must not mix. */
+    var urlKey = pageKey(url);
     var exitStart = null;
     if (!reduced && main) {
       exitStart = performance.now();
@@ -156,6 +192,14 @@
       }).then(function () {
         prefetches.delete(key);
         prefetchReady.delete(key);
+        /* Move the viewport while the old sheet is faded out and the
+           new one is not stamped in yet, so the jump is never seen:
+           a back/forward returns to where the reader left that page,
+           a fresh visit starts at the head. */
+        if (!url.hash) {
+          if (replace) restoreScroll(urlKey);
+          else window.scrollTo(0, 0);
+        }
         var doc = parsedDocs.get(key);
         if (!doc) {
           doc = new DOMParser().parseFromString(html, "text/html");
@@ -164,6 +208,7 @@
         if (!updatePage(doc)) throw new Error("invalid page");
         if (replace) history.replaceState(null, "", url.href);
         else history.pushState(null, "", url.href);
+        lastHref = url.href;
         syncNavActive();
         if (url.hash) {
           var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
@@ -211,4 +256,17 @@
   });
 
   syncNavActive();
+
+  /* Full page loads: with scrollRestoration off, the router owes the
+     browser's old behaviour. Restore the saved position after a
+     reload or a back/forward cross-document jump; ordinary link
+     landings still start at the head. */
+  try {
+    var entries = performance.getEntriesByType && performance.getEntriesByType("navigation");
+    var kind = entries && entries[0] && entries[0].type;
+    if (kind === "reload" || kind === "back_forward") {
+      var saved = +sessionStorage.getItem("scroll:" + pageKey(new URL(location.href))) || 0;
+      if (saved) window.scrollTo(0, saved);
+    }
+  } catch (e) {}
 })();
