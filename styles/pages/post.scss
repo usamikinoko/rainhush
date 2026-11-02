@@ -139,44 +139,120 @@
     scroll-margin-top: calc(56px + var(--wire-w) + var(--gap-3));
 }
 
-.post-body > h2:first-child {
+.post-body > :is(h1, h2):first-child {
     margin-top: 0;
     padding-top: 0;
     border-top: none;
 }
 
-.post-body h2,
-.post-body h3 {
+/* ------------------------------------------------------------
+   The heading hierarchy — a drawing's title-block voices.
+   Each level earns exactly ONE new signal, so no two neighbouring
+   levels are told apart by size alone:
+     h2  the sheet number (0x01 /) in the accent + a rule above
+     h3  the datum mark — an empty hairline square, a legend symbol
+     h4  a drawn tick — the same lead line about.md bullets use
+     h5  scale only, the quiet rung
+     h6  drops to the annotation face (mono, muted, spaced)
+   ------------------------------------------------------------ */
+
+.post-body :is(h1, h2, h3, h4, h5, h6) {
     color: var(--text-color);
+    font-weight: 600;
     line-height: 1.4;
+    text-wrap: balance;
+}
+
+/* A stray h1 inside the markdown is a lead line under the page
+   title, never a second title: one rule underneath closes it. */
+.post-body h1 {
+    margin: var(--gap-4) 0 var(--gap-2);
+    padding-bottom: var(--gap-2);
+    border-bottom: var(--wire-w) solid var(--border-light);
+    font-size: 1.45em;
+    letter-spacing: -0.01em;
 }
 
 .post-body h2 {
     margin: var(--gap-4) 0 var(--gap-2);
     padding-top: var(--gap-2);
     border-top: var(--wire-w) solid var(--border-light);
-    font-size: 1.28em;
+    font-size: 1.34em;
     letter-spacing: -0.008em;
 }
 
 /* The section number is part of the heading's voice, not a separate
    column: 0x01 /, 0x02 / … counted on the article, set in the mono
-   face one size down, and left unpadded — the heading is a sentence
-   that happens to start with its sheet number. */
+   face at the heading's own size (the number reads as part of the
+   line, not as a superscript label), and left unpadded — the
+   heading is a sentence that happens to start with its sheet
+   number. The number takes the accent (the same voice the figure
+   captions use for their mono lead-in), which is what makes a
+   chapter findable in a scan. */
 .post-body h2::before {
     counter-increment: h2c;
     content: "0x" counter(h2c, decimal-leading-zero) " /";
     font-family: var(--font-mono);
     font-weight: 400;
-    font-size: 0.78em;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    color: var(--primary-color);
     margin-right: 0.7em;
 }
 
+/* Subsections carry a datum mark instead of a number: an empty
+   hairline square, the drawing's own legend symbol. Drawn, not
+   typed — it scales with the heading, keeps the mono face out of
+   the CJK line, and cannot be confused with the sheet numbers,
+   which stay h2's alone. */
 .post-body h3 {
+    margin: var(--gap-3) 0 12px;
+    font-size: 1.12em;
+}
+
+.post-body h3::before {
+    content: "";
+    display: inline-block;
+    width: 0.52em;
+    height: 0.52em;
+    border: var(--wire-w) solid var(--text-muted);
+    margin-right: 0.62em;
+    vertical-align: 0.06em;
+}
+
+.post-body h4 {
     margin: var(--gap-3) 0 10px;
-    font-size: 1.08em;
+    font-size: 1em;
+}
+
+/* The tick is drawn, not typed — the same lead line the about
+   sheet's bullets use, lifted to heading duty. */
+.post-body h4::before {
+    content: "";
+    display: inline-block;
+    width: 0.9em;
+    height: var(--wire-w);
+    background: var(--text-muted);
+    vertical-align: 0.22em;
+    margin-right: 0.6em;
+}
+
+.post-body h5 {
+    margin: var(--gap-2) 0 8px;
+    font-size: 0.98em;
+    letter-spacing: 0.02em;
+}
+
+/* The annotation voice: the meta-label treatment (.post-meta-label,
+   the TOC head) applied to a heading — small, mono, letter-spaced,
+   muted. Nothing else in the prose is set in this voice, so h6
+   cannot be mistaken for a paragraph or a label row. */
+.post-body h6 {
+    margin: var(--gap-2) 0 8px;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
 }
 
 .post-body p {
