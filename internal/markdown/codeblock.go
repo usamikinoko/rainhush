@@ -31,6 +31,7 @@ func (e *Extension) Extend(m goldmark.Markdown) {
 	m.Renderer().AddOptions(renderer.WithNodeRenderers(
 		util.Prioritized(&codeBlockRenderer{}, 0),
 		util.Prioritized(&imageRenderer{}, 0),
+		util.Prioritized(&paragraphRenderer{}, 0),
 	))
 }
 

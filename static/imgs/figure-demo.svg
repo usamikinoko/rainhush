@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" role="img" aria-label="Demo plate">
+  <!-- Kitchen-sink placeholder plate for <rain-figure>. Follows the
+       site's wireframe voice: hairlines, hatching, one mono label.
+       Colours flip with the reader's colour-scheme so the sink page
+       stays legible in both themes without any page-side CSS. -->
+  <style>
+    .bg { fill: #ffffff; }
+    .line { stroke: #2a2a2a; stroke-width: 1.5; fill: none; }
+    .soft { stroke: #d6d6d6; stroke-width: 1; fill: none; }
+    .fill { fill: #d6d6d6; opacity: 0.35; }
+    .label { fill: #2a2a2a; font: 12px "Courier New", monospace; letter-spacing: 2px; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #161719; }
+      .line { stroke: #d6d6d6; }
+      .soft { stroke: #3d3d3d; }
+      .fill { fill: #3d3d3d; opacity: 0.5; }
+      .label { fill: #d6d6d6; }
+    }
+  </style>
+  <rect class="bg" width="640" height="320"/>
+  <g class="soft">
+    <path d="M0 40 H640 M0 80 H640 M0 120 H640 M0 160 H640 M0 200 H640 M0 240 H640 M0 280 H640"/>
+    <path d="M80 0 V320 M160 0 V320 M240 0 V320 M320 0 V320 M400 0 V320 M480 0 V320 M560 0 V320"/>
+  </g>
+  <g class="fill">
+    <path d="M140 230 L320 120 L500 230 Z"/>
+    <rect x="420" y="60" width="90" height="50"/>
+  </g>
+  <g class="line">
+    <path d="M100 250 L320 115 L540 250 Z"/>
+    <rect x="420" y="60" width="90" height="50"/>
+    <path d="M60 250 H580"/>
+    <circle cx="320" cy="250" r="4"/>
+  </g>
+  <text class="label" x="60" y="296">IMAGE. DEMO — FOLDING PLATE</text>
+</svg>

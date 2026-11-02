@@ -1,0 +1,167 @@
+/* ============================================================
+   rain-figure — the folding plate
+   Markdown block images arrive wrapped in <rain-figure> (the Go
+   paragraph renderer folds lone-image paragraphs, see
+   internal/markdown/figure.go). On connect the element grows a
+   title strip — IMAGE 01 · the alt caption · a drawn +/− — above a
+   clipping body, styled like the code block's header + sheet.
+
+   The fold animates grid-template-rows 1fr ↔ 0fr: height animates
+   to auto (which max-height can't), the prose below slides with the
+   motion, and the <img> element itself is never rebuilt or reloaded
+   — it only reflows. No refetch, no re-render flicker.
+   ============================================================ */
+rain-figure {
+  display: block;
+  margin: var(--gap-3) 0;
+}
+
+/* The frame only exists once the component has upgraded — no-JS
+   readers keep the plain bordered image, not an empty plate. */
+rain-figure.is-ready {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wire-w);
+  /* Same two-weight frame as .code-block: border-light outline,
+     border-soft internal rule through the 1px gap. */
+  background-color: var(--border-soft);
+  border: var(--wire-w) solid var(--border-light);
+}
+
+/* ---- the title strip -------------------------------------- */
+.rain-figure-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--cell-x);
+  border: none;
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-mono);
+  transition: background-color 0.15s;
+}
+
+/* Hover = the site-wide hatch, and the sheet number picks up the
+   accent — the same voices figcap and the readmore hovers use. */
+.rain-figure-head:hover {
+  background-image: var(--hatch-pattern);
+}
+
+.rain-figure-tag {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+
+.rain-figure-head:hover .rain-figure-tag {
+  color: var(--primary-color);
+}
+
+.rain-figure-caption {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Centred on purpose: the strip reads as a drawing's title block —
+     sheet number left, mark right, the caption set between them.
+     (Buttons centre their text by default; this makes it a decision.) */
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.rain-figure-caption.is-empty {
+  visibility: hidden;
+}
+
+/* The drawn mark: two hairline bars on an 11px cross. Open, the
+   vertical bar folds away and the mark reads as a minus; collapsed
+   it stands back up — a plus. Drawn, not typed, so it scales with
+   the hairlines and never picks up font metrics. */
+.rain-figure-mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
+}
+
+.rain-figure-mark::before,
+.rain-figure-mark::after {
+  content: "";
+  position: absolute;
+  background: var(--text-muted);
+  transition: transform 0.25s ease, background-color 0.15s;
+}
+
+.rain-figure-mark::before {
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: var(--wire-w);
+}
+
+.rain-figure-mark::after {
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: var(--wire-w);
+}
+
+rain-figure:not(.is-collapsed) .rain-figure-mark::after {
+  transform: scaleY(0);
+}
+
+.rain-figure-head:hover .rain-figure-mark::before,
+.rain-figure-head:hover .rain-figure-mark::after {
+  background: var(--primary-color);
+}
+
+/* ---- the body ---------------------------------------------- */
+.rain-figure-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-height: 0;
+  background-color: var(--bg-color);
+  /* visibility flips late on collapse (after the fold) and
+     instantly on expand, so the image paints through both moves */
+  transition: grid-template-rows 0.32s ease, visibility 0s;
+}
+
+rain-figure.is-collapsed .rain-figure-body {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.32s ease, visibility 0s 0.32s;
+}
+
+.rain-figure-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* The plate owns the frame now — the bare image rules from
+   .post-body/.about-body (hairline border, margins) give way. The
+   rain-figure element selector keeps this ahead of those page
+   rules regardless of bundle order. */
+rain-figure .rain-figure-clip img {
+  display: block;
+  margin: 0;
+  border: none;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rain-figure-body,
+  rain-figure.is-collapsed .rain-figure-body {
+    transition: none;
+  }
+}

@@ -1089,6 +1089,7 @@ var cssFiles = []string{
 	"static/css/layout.css",
 	"static/css/components/header.css",
 	"static/css/components/chroma.css",
+	"static/css/components/figure.css",
 	"static/css/pages/index.css",
 	"static/css/pages/post.css",
 	"static/css/components/code.css",
@@ -1102,6 +1103,7 @@ var cssFiles = []string{
 var jsFiles = []string{
 	"static/js/lifecycle.js",
 	"static/js/components/rain-code-copy.js",
+	"static/js/components/rain-figure.js",
 	"static/js/components/rain-toc.js",
 	"static/js/mermaid.js",
 	"static/js/header.js",

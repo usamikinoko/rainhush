@@ -34,6 +34,11 @@ func (ctx *buildContext) renderKitchenSink() error {
 		return fmt.Errorf("render sink code demo: %w", err)
 	}
 
+	figureDemo, err := renderMarkdown(sampleFigureMarkdown)
+	if err != nil {
+		return fmt.Errorf("render sink figure demo: %w", err)
+	}
+
 	pageItems := []pageItem{
 		{Number: 1, URL: "#"},
 		{Number: 2, URL: "#", Current: true},
@@ -60,6 +65,7 @@ func (ctx *buildContext) renderKitchenSink() error {
 		"SinkArticles":     42,
 		"SinkWords":        "128K",
 		"CodeDemo":         template.HTML(demo.html),
+		"FigureDemo":       template.HTML(figureDemo.html),
 		// c/post-meta reads the page data directly, same as a post page.
 		"Author":         sample.Author,
 		"Date":           sample.Date,
@@ -127,3 +133,7 @@ func sampleFriends() []friendLink {
 }
 
 const sampleCodeMarkdown = "```go\npackage main\n\n// The code-block component, rendered through the ordinary markdown\n// pipeline: Chroma highlight on the left, rain-code-copy on the right.\nfunc main() {\n\tprintln(\"hello, rainhush\")\n}\n```\n"
+
+// A lone-image paragraph — the Go paragraph renderer wraps it in
+// <rain-figure>, which the front-end upgrades to the folding plate.
+const sampleFigureMarkdown = "![Demo plate — the foldable figure](/static/imgs/figure-demo.svg)\n"
