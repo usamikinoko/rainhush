@@ -12,9 +12,17 @@
    footer-color, blockquote-color, --hatch, --grid-line.
    ============================================================ */
 :root {
+    /* Per-glyph split: CSS font matching walks this stack per
+       character, so Latin letters and digits land on Inter while
+       every CJK glyph (absent from Inter) falls through to Noto
+       Sans SC — the Google release of Source Han Sans (思源黑体).
+       Both are self-hosted variable faces sliced by unicode-range
+       (see _fonts.scss), so a page only downloads the slices its
+       own text touches. */
     --font-sans:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-        "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+        "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
+        "Noto Sans CJK SC", sans-serif;
     --font-mono:
         ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
         "Liberation Mono", "Courier New", monospace;

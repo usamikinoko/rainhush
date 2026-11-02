@@ -14,6 +14,7 @@
     "styles": "node scripts/build-styles.mjs",
     "styles:check": "node scripts/build-styles.mjs --check",
     "subset-font": "node scripts/subset-hand-font.mjs",
+    "fonts": "node scripts/build-fonts.mjs",
     "test": "go test ./..."
   },
   "bin": {
@@ -33,6 +34,8 @@
     "win32"
   ],
   "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/noto-sans-sc": "^5.3.1",
     "sass": "^1.107.1"
   }
 }
