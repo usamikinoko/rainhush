@@ -56,6 +56,10 @@
   }
 
   window.initMermaidDiagrams = run;
-  if (window.registerPageInit) window.registerPageInit(run);
+  /* Mermaid parsing + SVG render is heavy and already lazy (gated on
+     IntersectionObserver). Defer the initial scan off the critical
+     path so it never blocks the article's first paint. */
+  if (window.registerIdleInit) window.registerIdleInit(run);
+  else if (window.registerPageInit) window.registerPageInit(run);
   else document.addEventListener("DOMContentLoaded", run);
 })();

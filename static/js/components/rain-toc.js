@@ -9,7 +9,16 @@
 (function () {
   class RainToc extends HTMLElement {
     connectedCallback() {
-      this.build();
+      /* TOC is a navigational aid, not the content itself — defer its
+         build off the critical path so the article paints first. */
+      var self = this;
+      if (typeof window.registerIdleInit === "function") {
+        window.registerIdleInit(function () { self.build(); });
+      } else if (window.requestIdleCallback) {
+        window.requestIdleCallback(function () { self.build(); }, { timeout: 300 });
+      } else {
+        this.build();
+      }
     }
 
     disconnectedCallback() {

@@ -6,6 +6,15 @@
   var prefetchReady = new Set();
   var prefetchAborters = new Map();
   var fetchTimeout = 8000;
+
+  /* Rendering cache (parsedDocs) keeps a parsed DOM around so a
+     return visit skips fetch + DOMParser. Its TTL is deliberately
+     longer than the network prefetch cache: re-parsing a long article
+     is the real jank source. An LRU cap bounds memory on long
+     sessions. */
+  var docCacheTTL = 2 * 60 * 1000; /* 2 min */
+  var docCacheMax = 6;
+  var docAccess = new Map(); /* key -> last-visited timestamp */
   var exitDuration = 180;
 
   /* Scroll ownership. The browser's own history-scroll restoration is
@@ -128,10 +137,59 @@
     request.catch(function () { prefetches.delete(key); });
     window.setTimeout(function () {
       prefetches.delete(key);
-      parsedDocs.delete(key);
       prefetchReady.delete(key);
     }, 10000);
     return request;
+  }
+
+  /* The header and footer are near-constant across the site — only the
+     nav's active link moves. Rebuilding them on every route swap wastes
+     a full subtree destroy + re-layout for nothing. Compare the nav
+     region and skip the swap when nothing actually changed. */
+  function navFingerprint(el) {
+    if (!el) return null;
+    var nav = el.querySelector(".header-nav");
+    return nav ? nav.innerHTML : el.innerHTML;
+  }
+
+  /* Rendering-cache housekeeping: LRU eviction + TTL sweep. Keeps the
+     parsed DOM of recently read pages so back-and-forth navigation
+     never re-fetches or re-parses a long article. */
+  function evictOldestDoc() {
+    var oldestKey = null;
+    var oldestTime = Infinity;
+    docAccess.forEach(function (t, k) {
+      if (t < oldestTime) {
+        oldestTime = t;
+        oldestKey = k;
+      }
+    });
+    if (oldestKey) {
+      parsedDocs.delete(oldestKey);
+      docAccess.delete(oldestKey);
+    }
+  }
+
+  function cacheParsedDoc(key, doc) {
+    var now = Date.now();
+    if (parsedDocs.size >= docCacheMax) evictOldestDoc();
+    parsedDocs.set(key, doc);
+    docAccess.set(key, now);
+    sweepParsedDocs(now);
+  }
+
+  function touchParsedDoc(key) {
+    docAccess.set(key, Date.now());
+  }
+
+  function sweepParsedDocs(now) {
+    var cutoff = now - docCacheTTL;
+    docAccess.forEach(function (t, k) {
+      if (t < cutoff) {
+        parsedDocs.delete(k);
+        docAccess.delete(k);
+      }
+    });
   }
 
   function updatePage(doc) {
@@ -143,9 +201,14 @@
     var nextHeader = doc.querySelector("header");
     var currentFooter = document.querySelector("footer");
     var nextFooter = doc.querySelector("footer");
-    if (currentHeader && nextHeader) currentHeader.replaceWith(nextHeader);
+
+    if (currentHeader && nextHeader && navFingerprint(currentHeader) !== navFingerprint(nextHeader)) {
+      currentHeader.replaceWith(nextHeader);
+    }
     currentMain.replaceWith(nextMain);
-    if (currentFooter && nextFooter) currentFooter.replaceWith(nextFooter);
+    if (currentFooter && nextFooter && currentFooter.innerHTML !== nextFooter.innerHTML) {
+      currentFooter.replaceWith(nextFooter);
+    }
 
     document.title = doc.title;
     document.documentElement.lang = doc.documentElement.lang || "zh-CN";
@@ -203,7 +266,9 @@
         var doc = parsedDocs.get(key);
         if (!doc) {
           doc = new DOMParser().parseFromString(html, "text/html");
-          parsedDocs.set(key, doc);
+          cacheParsedDoc(key, doc);
+        } else {
+          touchParsedDoc(key);
         }
         if (!updatePage(doc)) throw new Error("invalid page");
         if (replace) history.replaceState(null, "", url.href);
